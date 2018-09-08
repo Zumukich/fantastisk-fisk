@@ -6,6 +6,8 @@ function findOutlier(integers) {
 	return even.length < odd.length ? even[0] : odd[0];
 }
 
+// From: https://www.codewars.com/kata/find-the-parity-outlier/
+// 6 kyu
 
 console.log(findOutlier([2, 4, 0, 100, 4, 11, 2602, 36]));
 console.log(findOutlier([160, 3, 1719, 19, 11, 13, -21]));

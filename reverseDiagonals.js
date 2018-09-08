@@ -11,5 +11,8 @@ function reverseDiagonals(matrix) {
     return matrix;
 }
 
+// From: https://www.codewars.com/kata/simple-fun-number-59-reverse-on-diagonals/
+// 7 kyu
+
 console.log("Result: ", reverseDiagonals([[1, 2, 3], [4, 5, 6], [7, 8, 9]]));
 console.log("Result: ", reverseDiagonals([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]]));

@@ -7,8 +7,11 @@ function divisors(integer) {
     }
     if ( retArr.length > 0 ) {
         return retArr;
-    } else 
+    } else
     return (`${integer} is prime`);
-  };
+};
+
+// From: https://www.codewars.com/kata/find-the-divisors/
+// 7 kyu
 
 console.log(divisors(7));

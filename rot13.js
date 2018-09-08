@@ -11,6 +11,9 @@ function rot13Alternative(message) {
     return message.replace(/[a-z]/gi, char => encoded[original.indexOf(char)]);
 }
 
+// From: https://www.codewars.com/kata/rot13/ and https://www.codewars.com/kata/rot13-1/
+// 5 kyu
+
 console.log(rot13("Va gur ryringbef, gur rkgebireg ybbxf ng gur BGURE thl'f fubrf"));
 console.log(rot13("EBG13 rknzcyr."));
 console.log(rot13("This is my first ROT13 excercise!"));

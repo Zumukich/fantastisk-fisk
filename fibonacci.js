@@ -4,6 +4,9 @@ function fibonacci(n) {
     } else return fibonacci(n - 1) + fibonacci(n - 2);
 }
 
+// From: https://www.codewars.com/kata/recursion-number-2-fibonacci/
+// 7 kyu
+
 console.log(fibonacci(1));
 console.log(fibonacci(2));
 console.log(fibonacci(3));

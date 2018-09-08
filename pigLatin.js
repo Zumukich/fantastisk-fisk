@@ -6,5 +6,8 @@ function pigLatin(str) {
     return words.join(" ");
 }
 
+// From: https://www.codewars.com/kata/simple-pig-latin/
+// 5 kyu
+
 console.log(pigLatin("Pig latin is cool !"));
 console.log(pigLatin("O tempora o mores !"));

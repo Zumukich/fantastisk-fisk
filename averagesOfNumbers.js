@@ -8,8 +8,7 @@ function averages(numbers) {
     return output;
 }
 
+// From: https://www.codewars.com/kata/averages-of-numbers/train/javascript
+// 7 kyu
+
 console.log(averages([1, 2]));
-/* 
-Input:  [ 1, 3, 5, 1, -10]
-Output:  [ 2, 4, 3, -4.5]
- */

@@ -9,6 +9,9 @@ function matrixRotate(matrix) {
 	return resultMatrix;
 }
 
+// From: https://www.codewars.com/kata/matrix-transpose/
+// 6 kyu
+
 console.log(matrixRotate([
 	[1, 2, 3],
     [4, 5, 6]]));

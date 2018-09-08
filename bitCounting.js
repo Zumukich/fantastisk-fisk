@@ -13,6 +13,9 @@ function fastBitCounting(n) {
 	return (n.toString(2).match(/1/gi) || []).length;
 }
 
+// From: https://www.codewars.com/kata/bit-counting/
+// 6 kyu
+
 console.log(bitCounting(0));
 console.log(fastBitCounting(0));
 console.log(fastBitCounting(1234));

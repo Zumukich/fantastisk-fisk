@@ -9,6 +9,9 @@ function likes (words) {
     return (lastWord) ? sentence.concat(" and ", lastWord) : sentence;
 }
 
+// From: https://www.codewars.com/kata/format-words-into-a-sentence/
+// 6 kyu
+
 console.log(likes (['ninja', 'samurai', 'ronin', '', 'warlord']));
 console.log(likes (['ninja', 'samurai', 'ronin']));
 console.log(likes (['ninja', '', 'ronin']));

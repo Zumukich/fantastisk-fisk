@@ -7,4 +7,7 @@ function arraySum(arr) {
 	return -1;
 }
 
+// From: https://www.codewars.com/kata/equal-sides-of-an-array/
+// 6 kyu
+
 console.log(arraySum([1, 2, 3, 4, 3, 2, 1]));

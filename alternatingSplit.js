@@ -24,6 +24,9 @@ function decrypt(encryptedText, n) {
 	return encryptedText;
 }
 
+// From: https://www.codewars.com/kata/simple-encryption-number-1-alternating-split/
+// 6 kyu
+
 console.log("Encrypt:", encrypt("This is a test!", 1));
 console.log("Decrypt:", decrypt("hsi  etTi sats!", 1));
 

@@ -8,6 +8,9 @@ function spinWords(str) {
 	return words.join(" ");
 }
 
+// From: https://www.codewars.com/kata/stop-gninnips-my-sdrow/
+// 6 kyu
+
 console.log(spinWords("Hey fellow warriors"));
 console.log(spinWords("This is a test"));
 console.log(spinWords("This is another test"));

@@ -12,7 +12,10 @@ String.prototype.toJadenCase = function () {
       wordArray[i] = wordArray[i].charAt(0).toUpperCase() + wordArray[i].slice(1);
     }
     return wordArray.join(" ");
-  };
+};
+
+// From: https://www.codewars.com/kata/jaden-casing-strings/
+// 7 kyu
 
 var testStr = "How can mirrors be real if our eyes aren't real";
 

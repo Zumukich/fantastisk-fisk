@@ -42,5 +42,8 @@ function parseDeadfish2(str) {
     return retVal;
 }
 
+// From: https://www.codewars.com/kata/make-the-deadfish-swim/
+// 6 kyu
+
 console.log(parseDeadfish("iiixsdoxso"));
 console.log(parseDeadfish2("iiixsdoxso"));

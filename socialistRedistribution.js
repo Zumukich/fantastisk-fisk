@@ -7,6 +7,9 @@ function socialistRedistribution(population, minimum) {
     return population;
 }
 
+// From: https://www.codewars.com/kata/socialist-distribution/
+// 6 kyu
+
 console.log(socialistRedistribution([2, 1, 8, 10], 5));
 console.log(socialistRedistribution([2, 3, 5, 45, 45], 5));
 console.log(socialistRedistribution([32, 29, 50, 28, 10, 30, 4], -7));

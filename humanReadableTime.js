@@ -5,5 +5,8 @@ function humanReadableTime(input) {
     return String(hours).padStart(2, "0") + ":" + String(minutes).padStart(2, "0") + ":" + String(seconds).padStart(2, "0");
 }
 
+// From: https://www.codewars.com/kata/human-readable-time/
+// 5 kyu
+
 console.log(humanReadableTime(254));
 console.log(humanReadableTime(359999));

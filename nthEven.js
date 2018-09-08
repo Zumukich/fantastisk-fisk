@@ -4,7 +4,10 @@ function nthEven(n){
 //    for ( var i = 0; i <= n; i++ ) {
 //        result = (i-1)*2;
 //    }
-//    return result; 
+//    return result;
   };
+
+// From: https://www.codewars.com/kata/get-nth-even-number/
+// 8 kyu
 
 console.log(nthEven(2));

@@ -8,4 +8,7 @@ function multiples(number) {
 	return sum;
 }
 
+// From: https://www.codewars.com/kata/multiples-of-3-or-5/
+// 6 kyu
+
 console.log(multiples(10));

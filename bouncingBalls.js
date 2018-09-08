@@ -7,6 +7,9 @@ function bouncingBalls(h, bounce, window) {
 	return 2 * count - 1;
 }
 
+// From: https://www.codewars.com/kata/bouncing-balls/
+// 6 kyu
+
 console.log(bouncingBalls(3, 0.66, 1.5));
 console.log(bouncingBalls(30, 0.66, 1.5));
 console.log(bouncingBalls(3, 1, 1.5));

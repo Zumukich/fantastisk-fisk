@@ -19,6 +19,9 @@ function subtract(a, b) {
 	return result.join("");
 }
 
+// From: https://www.codewars.com/kata/subtract-big-numbers
+// 5 kyu
+
 console.log(subtract("00000001", "3") == "-2");
 console.log(subtract("9007199254740991", "9007199254740991") == "0");
 console.log(subtract("98765", "56894") == "41871");
@@ -28,5 +31,3 @@ console.log(subtract("1020303004875647366210", "2774537626200857473632627613") =
 console.log(subtract("234", "242") == "-8");
 console.log(subtract("111111111111111110", "111111111111111111") == "-1");
 console.log(subtract("58608473622772837728372827", "7586374672263726736374") == "58600887248100574001636453");
-
-// From: https://www.codewars.com/kata/subtract-big-numbers

@@ -9,6 +9,9 @@ function fizzbuzz(n) {
     return n;
 }
 
+// From: https://www.codewars.com/kata/your-basic-fizzbuzz-kata/
+// beta
+
 console.log(fizzbuzz(1) );  // 1
 console.log(fizzbuzz(9) );  // "fizz"
 console.log(fizzbuzz(25));  // "buzz"

@@ -6,6 +6,9 @@ function isPrime(num) {
 	return true;
 }
 
+// From: https://www.codewars.com/kata/is-a-number-prime/
+// 6 kyu
+
 for (var j = -100; j <= 100; j++) {
 	console.log(j, isPrime(j));
 }

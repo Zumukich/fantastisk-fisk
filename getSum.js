@@ -6,6 +6,8 @@ function getSum(a, b) {
     return sum;
 }
 
+// From: https://www.codewars.com/kata/beginner-series-number-3-sum-of-numbers/
+// 7 kyu
 
 console.log(getSum(1, 0) == 1);   // 1 + 0 = 1
 console.log(getSum(1, 2) == 3);   // 1 + 2 = 3

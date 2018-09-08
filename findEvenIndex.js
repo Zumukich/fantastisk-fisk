@@ -15,6 +15,9 @@ function rightSum(array, index) {
         return array.slice(index + 1, array.length).reduce((a, b) => a + b);
 }
 
+// From: https://www.codewars.com/kata/equal-sides-of-an-array/
+// 6 kyu
+
 console.log(leftSum([1, 2, 3, 4, 3, 2, 1], 3));
 console.log(leftSum([1, 100, 50, -51, 1, 1], 1));
 console.log(leftSum([20,10,-80,10,10,15,35], 0));

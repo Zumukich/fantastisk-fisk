@@ -5,3 +5,6 @@ function squaresNeeded(grains) {
 for (var i = 0; i < 64; i++) {
     console.log(squaresNeeded(i));
 }
+
+// From: https://www.codewars.com/kata/the-wheat-slash-rice-and-chessboard-problem/
+// 7 kyu

@@ -7,7 +7,7 @@ function indexEqualsValueFast(a) {
     function splitArray(start, end) {
         if (start + 10 > end || a.length < 10) {
             return [start, end]
-        } else 
+        } else
         var mid = ~~((start + end) / 2);
         return a[mid] < mid ? splitArray(mid - 1, end) : splitArray(start, mid + 1);
     }
@@ -23,6 +23,9 @@ function indexEqualsValueFast(a) {
     }
     return -1;
 }
+
+// From: https://www.codewars.com/kata/element-equals-its-index/
+// 6 kyu
 
 console.log(indexEqualsValueFast([-8, 0, 2, 5]));
 console.log(indexEqualsValueFast([-1, 0, 3, 6]));

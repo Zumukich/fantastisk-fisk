@@ -7,6 +7,8 @@ function persistentBugger(num) {
 	return count;
 }
 
+// From: https://www.codewars.com/kata/persistent-bugger/
+// 6 kyu
 console.log(persistentBugger(39));
 console.log(persistentBugger(999));
 console.log(persistentBugger(4));

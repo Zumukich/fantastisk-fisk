@@ -7,6 +7,9 @@ function digPow(n, p) {
 	return total % n == 0 ? total / n : -1;
 }
 
+// From: https://www.codewars.com/kata/playing-with-digits/
+// 6 kyu
+
 console.log(digPow(89, 1));
 console.log(digPow(92, 1));
 console.log(digPow(695, 2));

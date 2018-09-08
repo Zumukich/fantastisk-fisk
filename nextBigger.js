@@ -32,13 +32,8 @@ function nextBigger(num) {
 	return parseInt(unchangedHalf.concat(orderedHalf).join(""));
 }
 
-//                     012345678
-//console.log(nextBigger(123455555));   // 21
-
-// console.log(nextBigger(12) == 21);   // 21
-// console.log(nextBigger(513) == 531);  // 531
-// console.log(nextBigger(2017) == 2071); // 2071
-// console.log(nextBigger(11234698)); // 2071
+// From: https://www.codewars.com/kata/next-bigger-number-with-the-same-digits/
+// 4 kyu
 
 console.log(nextBigger(3877), "should be 7378");
 console.log(nextBigger(6296), "should be 6629");

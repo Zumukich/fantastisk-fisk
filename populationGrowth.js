@@ -8,5 +8,8 @@ function populationGrowth(p0, percent, aug, p) {
 	return count;
 }
 
+// From: https://www.codewars.com/kata/growth-of-a-population/
+// 7 kyu
+
 console.log(populationGrowth(1500, 5, 100, 5000));
 console.log(populationGrowth(1500000, 2.5, 10000, 2000000));

@@ -8,6 +8,9 @@ function likes(names) {
     }
 }
 
+// From: https://www.codewars.com/kata/who-likes-it/
+// 6 kyu
+
 console.log(likes([]));
 console.log(likes());
 console.log(likes(["Peter"]));

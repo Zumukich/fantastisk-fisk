@@ -65,6 +65,9 @@ decodeMorse = function (morseCode) {
 	return result.join("");
 }
 
+// From: https://www.codewars.com/kata/decode-the-morse-code/
+// 6 kyu
+
 console.log(decodeMorse("  .... . -.--   .--- ..- -.. .  "));
 console.log(decodeMorse("...   ---   ..."));
 console.log(decodeMorse("      ...---... -.-.--   - .... .   --.- ..- .. -.-. -.-   -... .-. --- .-- -.   ..-. --- -..-   .--- ..- -- .--. ...   --- ...- . .-.   - .... .   .-.. .- --.. -.--   -.. --- --. .-.-.-  "));

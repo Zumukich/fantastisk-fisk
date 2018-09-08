@@ -15,4 +15,7 @@ function listHappy(limit) {
 	return happyList;
 }
 
+// From: https://www.codewars.com/kata/happy-numbers-5/
+// 6 kyu
+
 console.log(listHappy(1000));

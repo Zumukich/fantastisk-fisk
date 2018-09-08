@@ -26,6 +26,9 @@ function sudokuValidator(board) {
 	return valid;
 }
 
+// From: https://www.codewars.com/kata/sudoku-solution-validator/
+// 4 kyu
+
 console.log(sudokuValidator(
 	[
 		[1, 2, 3, 4, 5, 6, 7, 8, 9],

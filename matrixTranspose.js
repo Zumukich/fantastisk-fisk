@@ -1,4 +1,4 @@
-function matrixRotate(matrix) {
+function matrixTranspose(matrix) {
 	var resultMatrix = new Array(matrix[0].length);
 	for (var i = 0; i < matrix[0].length; i++) {
 		resultMatrix[i] = new Array(matrix.length);
@@ -12,10 +12,10 @@ function matrixRotate(matrix) {
 // From: https://www.codewars.com/kata/matrix-transpose/
 // 6 kyu
 
-console.log(matrixRotate([
+console.log(matrixTranspose([
 	[1, 2, 3],
     [4, 5, 6]]));
-console.log(matrixRotate([
+console.log(matrixTranspose([
 	[1, 4],
 	[2, 5],
 	[3, 6]]));

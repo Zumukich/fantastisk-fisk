@@ -1,4 +1,4 @@
-function likes (words) {
+function list (words) {
     if (!words) { return "" };
     var wordsOnly = words.filter((word) => { return word.length > 0 });
     if (wordsOnly.length == 0) { return "" };
@@ -12,8 +12,8 @@ function likes (words) {
 // From: https://www.codewars.com/kata/format-words-into-a-sentence/
 // 6 kyu
 
-console.log(likes (['ninja', 'samurai', 'ronin', '', 'warlord']));
-console.log(likes (['ninja', 'samurai', 'ronin']));
-console.log(likes (['ninja', '', 'ronin']));
-console.log(likes (['ronin']));
-console.log(likes ());
+console.log(list (['ninja', 'samurai', 'ronin', '', 'warlord']));
+console.log(list (['ninja', 'samurai', 'ronin']));
+console.log(list (['ninja', '', 'ronin']));
+console.log(list (['ronin']));
+console.log(list ());

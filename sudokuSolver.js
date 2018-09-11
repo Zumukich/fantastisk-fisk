@@ -20,7 +20,7 @@ var puzzle = [
 	[0, 0, 0, 0, 8, 0, 0, 7, 9]];
 
 function getRowItems(board, row) {
-	return board[row].filter(element => element != 0);
+	return board[row];
 }
 
 function getColItems(board, col) {
@@ -28,7 +28,7 @@ function getColItems(board, col) {
 	for (var i = 0; i < board.length; i++) {
 		retArray.push(board[i][col]);
 	}
-	return retArray.filter(element => element != 0);
+	return retArray;
 }
 
 function getGridItems(board, col, row) {
@@ -41,12 +41,15 @@ function getGridItems(board, col, row) {
 			retArray.push(board[i][j]);
 		}
 	}
-	return retArray.filter(element => element != 0);
+	return retArray;
 }
 
 function getPossibleNumbers(board, col, row) {
-	var usedNumbers = getRowItems(board, row).concat(getColItems(board, col).concat(getGridItems(board, row, col)));
 	var allNumbers = [];
+	var usedNumbers = getRowItems(board, row)
+		.concat(getColItems(board, col)
+			.concat(getGridItems(board, row, col)))
+		.filter(element => element != 0);
 	for (var i = 0; i < board.length; i++) allNumbers.push(i + 1);
 	return allNumbers.removeDuplicateElements().removeMultipleElements(usedNumbers);
 }

@@ -45,13 +45,13 @@ function getGridItems(board, col, row) {
 }
 
 function getPossibleNumbers(board, col, row) {
-	var allNumbers = [];
+	var allPossibleNumbers = [];
+	for (var i = 0; i < board.length; i++) allPossibleNumbers.push(i + 1);
 	var usedNumbers = getRowItems(board, row)
 		.concat(getColItems(board, col)
 			.concat(getGridItems(board, row, col)))
 		.filter(element => element != 0);
-	for (var i = 0; i < board.length; i++) allNumbers.push(i + 1);
-	return allNumbers.removeDuplicateElements().removeMultipleElements(usedNumbers);
+	return allPossibleNumbers.removeMultipleElements(usedNumbers).removeDuplicateElements();
 }
 
 Array.prototype.removeMultipleElements = function (removedElements) {
@@ -63,15 +63,20 @@ Array.prototype.removeDuplicateElements = function () {
 };
 
 function main(board) {
-	var optionTable = [];
-	for (var row = 0; row < board.length; row++) {
-		for (var col = 0; col < board[0].length; col++) {
-			if (board[row][col] === 0) {
-				console.log(col, row, getPossibleNumbers(board, col, row));
+	for (var count = 0; count < 10; count++) {
+		for (var row = 0; row < board.length; row++) {
+			for (var col = 0; col < board[0].length; col++) {
+				if (board[row][col] === 0) {
+					var possibilities = getPossibleNumbers(board, col, row);
+					if (possibilities.length === 1) {
+						board[row][col] = possibilities[0];
+						console.log(col, row, possibilities[0]);
+					}
+				}
 			}
 		}
 	}
-	return true;
+	return board;
 }
 
 
@@ -84,5 +89,7 @@ function main(board) {
 // console.log([5, 3, 5, 7, 0, 0, 7, 0, 0, 0, 0].removeDuplicateElements());
 
 // console.log(getPossibleNumbers(puzzle, 2, 0).removeDuplicateElements());
+
+// console.log(puzzle);
 
 console.log(main(puzzle));

@@ -1,24 +1,3 @@
-/*
-Kéne egy olyan függvény, ami:
- - Visszaadja egy adott koordinátájú elem
-   * sorának elemeit
-   * oszlopának elemeit
-   * gridjének elemeit
- - Meglévő tömbből megadott elemeket eltávolítja
-
-*/
-
-var puzzle = [
-	[5, 3, 0, 0, 7, 0, 0, 0, 0],
-	[6, 0, 0, 1, 9, 5, 0, 0, 0],
-	[0, 9, 8, 0, 0, 0, 0, 6, 0],
-	[8, 0, 0, 0, 6, 0, 0, 0, 3],
-	[4, 0, 0, 8, 0, 3, 0, 0, 1],
-	[7, 0, 0, 0, 2, 0, 0, 0, 6],
-	[0, 6, 0, 0, 0, 0, 2, 8, 0],
-	[0, 0, 0, 4, 1, 9, 0, 0, 5],
-	[0, 0, 0, 0, 8, 0, 0, 7, 9]];
-
 function getRowItems(board, row) {
 	return board[row];
 }
@@ -44,17 +23,7 @@ function getGridItems(board, col, row) {
 	return retArray;
 }
 
-function getPossibleNumbers(board, col, row) {
-	var allPossibleNumbers = [];
-	for (var i = 0; i < board.length; i++) allPossibleNumbers.push(i + 1);
-	var usedNumbers = getRowItems(board, row)
-		.concat(getColItems(board, col)
-			.concat(getGridItems(board, row, col)))
-		.filter(element => element != 0);
-	return allPossibleNumbers.removeMultipleElements(usedNumbers).removeDuplicateElements();
-}
-
-Array.prototype.removeMultipleElements = function (removedElements) {
+Array.prototype.removeElements = function (removedElements) {
 	return this.filter(entry => !removedElements.includes(entry));
 };
 
@@ -62,34 +31,77 @@ Array.prototype.removeDuplicateElements = function () {
 	return this.filter((entry, index) => index === this.indexOf(entry));
 };
 
-function main(board) {
-	for (var count = 0; count < 10; count++) {
+function getPossibleNumbers(board, col, row) {
+	var allPossibleNumbers = [];
+	for (var i = 0; i < board.length; i++) allPossibleNumbers.push(i + 1);
+	var usedNumbers = getRowItems(board, row)
+		.concat(getColItems(board, col)
+		.concat(getGridItems(board, row, col)))
+		.filter(element => element != 0);
+	return allPossibleNumbers
+		.removeDuplicateElements()
+		.removeElements(usedNumbers);
+}
+
+function validateBoard(board) {
+	var valid = true;
+	for (var i = 0; i < board.length; i++) {
+		console.log(getRowItems(board, i), getRowItems(board, i).removeDuplicateElements(), getRowItems(board, i).join("").split("") != getRowItems(board, i).removeDuplicateElements().join("").split(""));
+		if (getRowItems(board, i) != getRowItems(board, i).removeDuplicateElements()) valid = false;
+	}
+	return valid;
+}
+a.some((val, i) => a.indexOf(val) !== i);
+function solve(board) {
+	if (validateBoard(board) != true) return "This sudoku is unsolvable!";
+		do {
+		var emptyCell = false;
+		var filledCell = false;
 		for (var row = 0; row < board.length; row++) {
 			for (var col = 0; col < board[0].length; col++) {
 				if (board[row][col] === 0) {
+					emptyCell = true;
 					var possibilities = getPossibleNumbers(board, col, row);
 					if (possibilities.length === 1) {
 						board[row][col] = possibilities[0];
-						console.log(col, row, possibilities[0]);
+						filledCell = true;
 					}
 				}
 			}
 		}
-	}
+		if (emptyCell && !filledCell) return "This sudoku is unsolvable!";
+	} while (emptyCell && filledCell);
 	return board;
 }
 
+// From: https://www.codewars.com/kata/sudoku-solver
+// 3 kyu
 
-// console.log(getRowItems(puzzle, 3));
-// console.log(getColItems(puzzle, 3));
-// console.log(getGridItems(puzzle, 3, 4));
-// console.log([5, 3, 0, 0, 7, 0, 0, 0, 0].removeMultipleElements([0, 3, 5]));
-// console.log([5, 3, 0, 0, 7, 0, 0, 0, 0].removeDuplicateElements());
-// console.log([5, 3, 0, 0, 7, 0, 0, 0, 0].removeDuplicateElements());
-// console.log([5, 3, 5, 7, 0, 0, 7, 0, 0, 0, 0].removeDuplicateElements());
+console.log(solve(
+	[[0, 4, 1, 4],
+	[3, 1, 2, 4],
+	[4, 2, 0, 1],
+	[1, 3, 4, 0]]));
 
-// console.log(getPossibleNumbers(puzzle, 2, 0).removeDuplicateElements());
+// console.log(solve([
+// 	[2, 0, 0, 1],
+// 	[0, 0, 1, 0],
+// 	[0, 2, 0, 0],
+// 	[0, 0, 0, 4]]));
 
-// console.log(puzzle);
+// console.log(solve([
+// 	[0, 0, 2, 0],
+// 	[0, 3, 0, 4],
+// 	[3, 0, 4, 0],
+// 	[0, 2, 0, 0]]));
 
-console.log(main(puzzle));
+// console.log(solve([
+// 	[0, 0, 6, 0, 2, 0, 0, 5, 0],
+// 	[0, 0, 2, 0, 0, 0, 1, 9, 4],
+// 	[0, 0, 0, 1, 0, 0, 2, 0, 7],
+// 	[6, 0, 7, 0, 8, 2, 0, 1, 9],
+// 	[0, 8, 5, 0, 7, 0, 0, 3, 0],
+// 	[0, 0, 0, 6, 0, 5, 4, 0, 0],
+// 	[0, 9, 0, 0, 1, 3, 0, 4, 0],
+// 	[0, 0, 1, 0, 0, 9, 0, 0, 0],
+// 	[7, 3, 0, 0, 0, 8, 9, 0, 0]]));

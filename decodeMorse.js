@@ -3,7 +3,7 @@ var MORSE_CODE = {
 	".-..-.": "\"",
 	"...-..-": "$",
 	".-...": "&",
-	".----.": "\'",
+	".----.": "'",
 	"-.--.": "(",
 	"-.--.-": ")",
 	".-.-.": "+",
@@ -56,10 +56,10 @@ var MORSE_CODE = {
 	"...---...": "SOS"
 }
 
-decodeMorse = function (morseCode) {
-	var characters = morseCode.replace(/^ +/, "").replace(/ +$/, "").replace(/(   )/gi, "  ").split(" ");
+var decodeMorse = function (morseCode) {
+	var characters = morseCode.replace(/^ +/, "").replace(/ +$/, "").replace(/( {3})/gi, "  ").split(" ");
 	var result = [];
-	for ( var i = 0; i < characters.length; i++ ) {
+	for (var i = 0; i < characters.length; i++) {
 		result.push(MORSE_CODE[characters[i]] ? MORSE_CODE[characters[i]] : " ");
 	}
 	return result.join("");

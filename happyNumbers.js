@@ -19,3 +19,23 @@ function listHappy(limit) {
 // 6 kyu
 
 console.log(listHappy(1000));
+
+function isHappyNthPower(num, pow) {
+	var sums = [num];
+	for (var count = 0; sums[count] != 1; count++) {
+		sums.push(String(sums[count]).split("").reduce((a, b) => a + Math.pow(parseInt(b), pow), 0));
+		if (count != sums.indexOf(sums[count])) {
+			sums.splice(0, sums.indexOf(sums[count]));
+			sums.pop();
+			return sums;
+		}
+	}
+	return [1];
+}
+
+// From: https://www.codewars.com/kata/happy-numbers-to-the-n-power/
+// 6 kyu
+
+console.log(isHappy(7, 2));
+console.log(isHappy(42, 2));
+console.log(isHappy(41451, 2));

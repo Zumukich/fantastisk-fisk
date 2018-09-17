@@ -34,5 +34,8 @@ function check1800(str) {
 	return result;
 }
 
+// From: https://www.codewars.com/kata/1-800-code-war/
+// 5 kyu
+
 console.log(check1800("1-800-CODE-WAR"));
 console.log(check1800("1-800-ART-RAPT"));

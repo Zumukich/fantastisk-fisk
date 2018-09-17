@@ -13,8 +13,8 @@ function getColItems(board, col) {
 function getGridItems(board, col, row) {
 	const gridSize = Math.sqrt(board.length);
 	var retArray = [];
-	startX = Math.floor(col / gridSize) * gridSize;
-	startY = Math.floor(row / gridSize) * gridSize;
+	var startX = Math.floor(col / gridSize) * gridSize;
+	var startY = Math.floor(row / gridSize) * gridSize;
 	for (var j = startY; j < startY + gridSize; j++) {
 		for (var i = startX; i < startX + gridSize; i++) {
 			retArray.push(board[i][j]);

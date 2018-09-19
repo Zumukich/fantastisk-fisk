@@ -1,4 +1,4 @@
-function indexEqualsValue(a) {
+function indexEqualsValueNice(a) {
     return a.reduce((prevVal, curVal, curIdx) => { return prevVal == -1 && curVal == curIdx ? curIdx : prevVal }, -1);
 }
 
@@ -8,7 +8,7 @@ function indexEqualsValueFast(a) {
         if (start + 10 > end || a.length < 10) {
             return [start, end]
         } else
-        var mid = ~~((start + end) / 2);
+            var mid = ~~((start + end) / 2);
         return a[mid] < mid ? splitArray(mid - 1, end) : splitArray(start, mid + 1);
     }
 
@@ -27,6 +27,7 @@ function indexEqualsValueFast(a) {
 // From: https://www.codewars.com/kata/element-equals-its-index/
 // 6 kyu
 
+console.log(indexEqualsValueNice([-8, 0, 2, 5]));
 console.log(indexEqualsValueFast([-8, 0, 2, 5]));
 console.log(indexEqualsValueFast([-1, 0, 3, 6]));
 console.log(indexEqualsValueFast([-3, 0, 1, 3, 10]));

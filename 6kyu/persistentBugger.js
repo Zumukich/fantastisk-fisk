@@ -1,7 +1,7 @@
 function persistentBugger(num) {
 	var count = 0;
 	while (num >= 10) {
-		var num = String(num).split("").reduce((a, b) => parseInt(a) * parseInt(b));
+		num = String(num).split("").reduce((a, b) => parseInt(a) * parseInt(b));
 		count++;
 	}
 	return count;

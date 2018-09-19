@@ -1,6 +1,6 @@
 function isPrime(num) {
 	if (num == 0 || Math.abs(num) == 1) return false;
-	for (i = 2; i <= Math.abs(num) / 2; i++) {
+	for (var i = 2; i <= Math.abs(num) / 2; i++) {
 		if (num % i == 0) return false;
 	}
 	return true;

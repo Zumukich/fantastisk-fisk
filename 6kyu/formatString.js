@@ -1,9 +1,9 @@
 function list(names) {
-	if (!names || names.length === 0) { return "" };
-	var nameArr = [];
-	for (var i = 0; i < names.length; i++) nameArr.push(names[i].name);
-	var wordsOnly = nameArr.filter((word) => { return word.length > 0 });
-    if (wordsOnly.length == 0) { return "" };
+    if (!names || names.length === 0) return "";
+    var nameArr = [];
+    for (var i = 0; i < names.length; i++) nameArr.push(names[i].name);
+    var wordsOnly = nameArr.filter((word) => { return word.length > 0 });
+    if (wordsOnly.length == 0) return "";
     if (wordsOnly.length > 1) {
         var lastWord = wordsOnly.pop();
     }

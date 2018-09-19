@@ -39,3 +39,4 @@ function isHappyNthPower(num, pow) {
 console.log(isHappy(7, 2));
 console.log(isHappy(42, 2));
 console.log(isHappy(41451, 2));
+console.log(isHappyNthPower(41451, 2));

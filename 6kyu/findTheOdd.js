@@ -15,10 +15,11 @@ function oldFindTheOdd(A) {
 }
 
 function findOdd(A) {
-	return A.sort((a, b) => a - b).reduce((acc, curVal, curIdx, arr) => acc == Infinity && curVal != arr[curIdx + 1] && curIdx % 2 == 0 ? curVal : acc, Infinity);
+    return A.sort((a, b) => a - b).reduce((acc, curVal, curIdx, arr) => acc == Infinity && curVal != arr[curIdx + 1] && curIdx % 2 == 0 ? curVal : acc, Infinity);
 }
 
 // From: https://www.codewars.com/kata/find-the-odd-int/
 // 6 kyu
 
-console.log(findTheOdd([ 1, 1, 1, 1, 1, 1, 10, 1, 1, 1, 1 ]));
+console.log(oldFindTheOdd([1, 1, 1, 1, 1, 1, 10, 1, 1, 1, 1]));
+console.log(findOdd([1, 1, 1, 1, 1, 1, 10, 1, 1, 1, 1]));

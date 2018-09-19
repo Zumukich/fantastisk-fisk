@@ -1,4 +1,4 @@
-function bigAdd(a, b) {
+function sumStrings(a, b) {
 	a = a.replace(/^[0]+/g, "");
 	b = b.replace(/^[0]+/g, "");
 	a.length > b.length ? b = b.padStart(a.length, "0") : a = a.padStart(b.length, "0");

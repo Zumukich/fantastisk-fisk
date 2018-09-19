@@ -1,5 +1,5 @@
 function sequenceSum(begin, end, step) {
-    if (begin == NaN || end == NaN || step == NaN || begin > end) return 0;
+    if (isNaN(begin) || isNaN(end) || isNaN(step) || begin > end) return 0;
     var sumOfSequence = 0;
     for (var i = begin; i <= end; i += step) {
         sumOfSequence += i;

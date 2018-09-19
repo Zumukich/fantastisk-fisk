@@ -47,8 +47,8 @@ function bigAdd() {
 	if (arguments.length === 0) return "0";
 	if (arguments.length === 1) return String(arguments[0]);
 	if (arguments.length === 2) {
-		strA = normalize(arguments[0], String(arguments[1]).replace(/^-/, "").length);
-		strB = normalize(arguments[1], String(arguments[0]).replace(/^-/, "").length);
+		var strA = normalize(arguments[0], String(arguments[1]).replace(/^-/, "").length);
+		var strB = normalize(arguments[1], String(arguments[0]).replace(/^-/, "").length);
 		if (strA.charAt(0) !== "-" && strB.charAt(0) !== "-") return stringAdd(strA, strB);
 		if (strA.charAt(0) === "-" && strB.charAt(0) !== "-") return stringSubtract(strB, strA.substring(1));
 		if (strA.charAt(0) !== "-" && strB.charAt(0) === "-") return stringSubtract(strA, strB.substring(1));
@@ -60,8 +60,8 @@ function bigAdd() {
 }
 
 function bigSub(a, b) {
-	strA = normalize(a, String(b).replace(/^-/, "").length);
-	strB = normalize(b, String(a).replace(/^-/, "").length);
+	var strA = normalize(a, String(b).replace(/^-/, "").length);
+	var strB = normalize(b, String(a).replace(/^-/, "").length);
 	if (strA.charAt(0) !== "-" && strB.charAt(0) !== "-") return stringSubtract(strA, strB);
 	if (strA.charAt(0) === "-" && strB.charAt(0) !== "-") return "-".concat(stringAdd(strA.substring(1), strB));
 	if (strA.charAt(0) !== "-" && strB.charAt(0) === "-") return stringAdd(strA, strB.substring(1));
@@ -80,7 +80,7 @@ console.log(bigAdd(
 	'60978868971705293697898250181738038209826232123376',
 	'69860150841064476785098792603416150336620574263611',
 	'56168902810711637957516052113619714978796129638861'
-  ) === "268098735484489701795727691299394128246313057063037");
+) === "268098735484489701795727691299394128246313057063037");
 
 console.log(bigAdd("1", "123456789012345678901234567890") === "123456789012345678901234567891");
 console.log(bigAdd(1, "123456789012345678901234567890") === "123456789012345678901234567891");

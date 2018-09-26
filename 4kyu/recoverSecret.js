@@ -3,49 +3,52 @@ function recoverSecret(triplets) {
 		.reduce((acc, val) => acc.concat(val), [])
 		.filter((val, idx, arr) => arr.indexOf(val) === idx)
 		.length;
+	var safetySwitch = 0;
 	do {
-		var seenTriplets = new Array(triplets.length).fill(0);
 		var secret = [];
+		var seenTriplets = new Array(triplets.length).fill(0);
 		triplets.push(triplets.shift());
 		for (var i = 0; i < 3; i++) secret.push(triplets[0][i]);
 		seenTriplets[0] = 1;
 		console.log(`Used ${secret} as a start`);
 		var iterator = 1;
+		safetySwitch++;
 		do {
-			var usedHint = false;
+			var decipheredLength = secret.length;
 			console.log(`Considering ${triplets[iterator]} for ${secret}`)
+			if (triplets[iterator].every(element => secret.includes(element)))
+				seenTriplets[iterator] = 1;
 			if (triplets[iterator][2] === secret[0]) {
 				secret.unshift(triplets[iterator][1]);
 				secret.unshift(triplets[iterator][0]);
 				console.log(`Used ${triplets[iterator]} to get to ${secret}`);
-				usedHint = true;
 			}
 			if (triplets[iterator][0] === secret[secret.length - 1]) {
 				secret.push(triplets[iterator][1]);
 				secret.push(triplets[iterator][2]);
 				console.log(`Used ${triplets[iterator]} to get to ${secret}`);
-				usedHint = true;
 			}
 			if (triplets[iterator][1] === secret[0]) {
 				secret.unshift(triplets[iterator][0]);
 				console.log(`Used ${triplets[iterator]} to get to ${secret}`);
-				usedHint = true;
 			}
 			if (triplets[iterator][1] === secret[secret.length - 1]) {
 				secret.push(triplets[iterator][2]);
 				console.log(`Used ${triplets[iterator]} to get to ${secret}`);
-				usedHint = true;
 			}
 			if (secret.indexOf(triplets[iterator][2]) - secret.indexOf(triplets[iterator][0]) === 1) {
 				secret.splice(secret.indexOf(triplets[iterator][0]) + 1, 0, triplets[iterator][1]);
 				console.log(`Used ${triplets[iterator]} to get to ${secret}`);
-				usedHint = true;
 			}
-			if (usedHint) seenTriplets[iterator] = 1;
-			iterator = usedHint ? seenTriplets.indexOf(0) : Math.max(iterator, seenTriplets.lastIndexOf(1)) + 1;
+			if (decipheredLength !== secret.length) {
+				seenTriplets[iterator] = 1;
+				iterator = seenTriplets.indexOf(0);
+			} else {
+				iterator = Math.max(iterator, seenTriplets.lastIndexOf(1)) + 1;
+			}
 		} while (iterator < triplets.length)
 		console.log("--");
-	} while (secret.length < messageLength);
+	} while (secret.length < messageLength && safetySwitch < triplets.length);
 	return secret.join("");
 }
 

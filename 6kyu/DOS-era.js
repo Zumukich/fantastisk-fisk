@@ -96,6 +96,8 @@ function help(cmd) {
 		}
 	}
 }
+// From: https://www.codewars.com/kata/dos-era-number-1-help/
+// 6 kyu
 
 // console.log(help("copy"));
 console.log(help("help"));

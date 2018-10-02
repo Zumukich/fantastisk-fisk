@@ -78,12 +78,10 @@ const helpInfo = {
 };
 
 function help(cmd) {
-	cmd = cmd.toUpperCase() || "";
+	cmd = (cmd || "").toUpperCase();
 	switch (true) {
 		case (cmd === ""): {
-			var cmdArr = [];
-			cmdArr.push("list of commands goes here");
-			return cmdArr;
+			return Object.keys(helpInfo).map(element => element.concat(":", helpInfo[element].preview)).join("\n");
 		}
 		case (cmd === "/?"): {
 			return helpInfo["HELP"].preview.concat("\n\n", helpInfo["HELP"].details);
@@ -96,16 +94,15 @@ function help(cmd) {
 		}
 	}
 }
+
 // From: https://www.codewars.com/kata/dos-era-number-1-help/
 // 6 kyu
 
-// console.log(help("copy"));
+console.log(help("copy"));
 console.log(help("help"));
 console.log(help("abc"));
 console.log(help("/?"));
 console.log(help(""));
-console.log(help("copy"));
-
-// console.log(Object.keys(helpInfo));
-// console.log(Object.keys(helpInfo)[0], Object.values(helpInfo)[0].preview);
-// console.log(helpInfo.XCOPY["preview"], "\n\n", helpInfo.XCOPY.details);
+// console.log(help(null));
+// console.log(help(undefined));
+// console.log(help(NaN));

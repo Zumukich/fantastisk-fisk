@@ -1,7 +1,5 @@
-function printerError(s) {
-	return (s.match(/[^a-m]/g) || []).length + "/" + s.length;
-}
+var capitals = function (word) {
+	return word.match(/[A-Z]/g).map(letter => word.indexOf(letter));
+};
 
-console.log(printerError("aaabbbbhaijjjm"));
-console.log(printerError("aaaxbbbbyyhwawiwjjjwwm"));
-console.log(printerError(""));
+console.log(capitals("CodEWaRs"));

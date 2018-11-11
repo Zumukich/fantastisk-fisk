@@ -1,7 +1,6 @@
 function getPrimes(num) {
-	var factors = {};
-	var fact = 2;
-	while (num > 1) {
+	var result = "";
+	for (var fact = 2, factors = {}; num > 1;) {
 		if (num % fact === 0) {
 			factors[fact] = !factors[fact] ? 1 : ++factors[fact];
 			num /= fact;
@@ -9,17 +8,14 @@ function getPrimes(num) {
 			fact++;
 		}
 	}
-	return factors;
-}
-
-function primesInNumbers(n) {
-	var primes = getPrimes(n);
-	return primes;
+	for (var i = 0; i < Object.keys(factors).length; i++) {
+		result = result.concat(`(${Object.keys(factors)[i]}${Object.values(factors)[i] > 1 ? "**" + Object.values(factors)[i] : ""})`);
+	}
+	return result;
 }
 
 // From: https://www.codewars.com/kata/primes-in-numbers
 // 5 kyu
 
-console.log(primesInNumbers(86240));
-
-// (2**5)(5)(7**2)(11)
+console.log(getPrimes(86240));
+console.log(getPrimes(9007199254740991));

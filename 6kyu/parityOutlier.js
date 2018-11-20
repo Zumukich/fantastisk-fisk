@@ -47,6 +47,7 @@ function findKey(keys) {
 // also https://www.codewars.com/kata/iq-test
 // also https://www.codewars.com/kata/find-the-stray-number/
 // also https://www.codewars.com/kata/t-dot-t-t-number-4-key-of-door/
+// also https://www.codewars.com/kata/find-the-unique-number-1/
 // 6 kyu, 7 kyu
 
 console.log(stray([1, 1, 2]));

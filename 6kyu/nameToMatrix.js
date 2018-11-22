@@ -23,11 +23,18 @@ function nameToAnyMatrix(text, col) {
 		.trim();
 }
 
+function splitStrings(str) {
+	return str.padEnd(Math.ceil(str.length / 2) * 2, "_").match(/../g);
+}
+
 // From: https://www.codewars.com/kata/name-to-matrix
 // also https://www.codewars.com/kata/simple-transposition/
+// also https://www.codewars.com/kata/split-strings
 // 6 kyu
 
 console.log(nameToSquareMatrix("Bill"));
 console.log(nameToSquareMatrix("Frankie"));
 console.log(nameToAnyMatrix("Simple text", 2));
 console.log(nameToAnyMatrix("wa", 2));
+console.log(splitStrings("abc"));
+console.log(splitStrings("abcdef"));

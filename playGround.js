@@ -1,5 +1,7 @@
-var capitals = function (word) {
-	return word.match(/[A-Z]/g).map(letter => word.indexOf(letter));
-};
+countWord=s=>(s.match(/w.*?o.*?r.*?d/gi)||[]).length
 
-console.log(capitals("CodEWaRs"));
+console.log(countWord("word"));
+console.log(countWord("WORD"));
+console.log(countWord("hello world"));
+console.log(countWord("woahr dnkwnoyrn sdo"));
+console.log(countWord("faszkalap"));

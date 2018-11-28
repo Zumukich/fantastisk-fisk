@@ -22,13 +22,19 @@ const decimalDegToRadian = decDegree => decDegree
 
 function saveMark(c1, c2) {
 	const radius = 3390;
-	var [lat1, lon1] = [...c1.split(",")].map(e => decimalDegToRadian(e));
-	var [lat2, lon2] = [...c2.split(",")].map(e => decimalDegToRadian(e));
-	var inverseHaversine = Math.asin(Math.sqrt(Math.pow(Math.sin((lat2 - lat1) / 2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin((lon2 - lon1) / 2), 2)));
-	var havDist = 2 * radius * inverseHaversine;
-	var centralAngle = Math.atan(Math.sqrt(Math.pow(Math.cos(lat2) * Math.sin(lon2 - lon1), 2) + Math.pow(Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1), 2)) / Math.sin(lat1) * Math.sin(lat2) + Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1));
+	var [phi1, lambda1] = [...c1.split(",")].map(e => decimalDegToRadian(e));
+	var [phi2, lambda2] = [...c2.split(",")].map(e => decimalDegToRadian(e));
+	var inverseHaversine = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin((phi2 - phi1) / 2), 2) + Math.cos(phi1) * Math.cos(phi2) * Math.pow(Math.sin((lambda2 - lambda1) / 2), 2)));
+	console.log("haversine", inverseHaversine);
+	var havDist = radius * inverseHaversine;
+
+	var vincenty = Math.sqrt(Math.pow(Math.cos(phi2) * Math.sin(lambda2 - lambda1), 2) + Math.pow(Math.cos(phi1) * Math.sin(phi2) - Math.sin(phi1) * Math.cos(phi2) * Math.cos(lambda2 - lambda1), 2)) / Math.sin(phi1) * Math.sin(phi2) + Math.cos(phi1) * Math.cos(phi2) * Math.cos(lambda2 - lambda1);
+	console.log("vincenty", Math.atan(vincenty));
+	var centralAngle = Math.atan(vincenty) < 0 ? Math.atan(vincenty + Math.PI) : Math.atan(vincenty);
+
+	console.log("central angle", centralAngle);
 	var cenDist = radius * centralAngle;
-	return havDist - cenDist;
+	return havDist;
 	// return Math.floor(2 * radius * inverseHaversine / 10) * 10 + "KM";
 	// return 2 * radius * inverseHaversine + "KM";
 }

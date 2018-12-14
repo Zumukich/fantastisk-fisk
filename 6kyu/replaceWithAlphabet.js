@@ -3,8 +3,18 @@ function replaceWithAlphabet(text) {
 	return text.split("").map(l => l.toLowerCase()).map(e => dict[e] ? dict[e] + " " : "").join("").trim();
 }
 
+function high(x) {
+	const score = word => word.split("").reduce((sum, char) => sum += char.charCodeAt() - 96, 0);
+	return x.split(" ").reduce((maxValue, currentWord) => score(currentWord) > score(maxValue) ? currentWord : maxValue, "")
+}
+
 // From: https://www.codewars.com/kata/replace-with-alphabet-position
+// also: https://www.codewars.com/kata/highest-scoring-word/
 // 6 kyu
 
 console.log(replaceWithAlphabet("The sunset sets at twelve o' clock."));
 console.log(replaceWithAlphabet(""));
+
+console.log(high("man i need a taxi up to ubud"));             //, "taxi"
+console.log(high("what time are we climbing up the volcano")); //, "volcano"
+console.log(high("take me to semynak"));                       //, "semynak"

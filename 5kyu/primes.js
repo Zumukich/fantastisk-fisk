@@ -1,4 +1,4 @@
-function getPrimes(num) {
+function primeFactors(num) {
 	var result = "";
 	for (var fact = 2, factors = {}; num > 1;) {
 		if (num % fact === 0) {
@@ -14,8 +14,38 @@ function getPrimes(num) {
 	return result;
 }
 
+function primesOf(n) {
+	for (var f = 2, factors = []; n > 1;) {
+		if (n % f === 0) {
+			factors.push(f);
+			n /= f;
+		} else {
+			f++;
+		}
+	}
+	return factors;
+}
+
+function countKprimes(k, start, end) {
+	for (var i = start, result = []; i <= end; i++) {
+		result.push(i);
+	}
+	return result.filter(e => primesOf(e).length === k);
+}
+
+function puzzle(s) {
+	var onePrime = countKprimes(1, 1, s);
+	var threePrimes = countKprimes(3, 1, s);
+	var sevenPrimes = countKprimes(7, 1, s);
+	return [onePrime, threePrimes, sevenPrimes];
+}
+
 // From: https://www.codewars.com/kata/primes-in-numbers
 // 5 kyu
 
-console.log(getPrimes(86240));
-console.log(getPrimes(9007199254740991));
+console.log(primeFactors(86240));
+console.log(primeFactors(9007199254740991));
+console.log(countKprimes(5, 500, 600));
+
+console.log(puzzle(138));
+console.log(puzzle(143));

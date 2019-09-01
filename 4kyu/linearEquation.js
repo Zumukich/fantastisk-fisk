@@ -50,11 +50,7 @@ function solve(equations) {
 	var coefficients = [[]];
 	var rightSides = [0];
 	for (let i = 0; i < equations.length; i++) {
-		const eqPos = equations[i].indexOf("=");
-		if (eqPos === -1 || eqPos === 0 || eqPos === equations[i].length - 1) {
-			return null;
-		}
-		var [varMap, result] = normalizeEquation(equations[i]);
+		var varMap = normalizeEquation(equations[i]);
 		coefficients.push(Array(coefficients[0].length).fill(0));
 		varMap.forEach(loadVarMatrix);
 		rightSides.push(result);
@@ -70,8 +66,7 @@ module.exports = {
 	normalizeEquation
 }
 
-console.log(solve(["2x-y+3x=-2y+3x+9y", "x+y=1"]));
-// console.log(solve(["2x=4"]));
+console.log(solve(["2x=4"]));
 // console.log(solve(["2x+8y=4", "-x+4y=14"]));
 // console.log(solve(["x=4y", "2x=8y", "x+y=5"]));
 // console.log(solve(["x+y=7z-1", "6x+z=-3y", "4y+10z=-8x"]));

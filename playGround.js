@@ -24,22 +24,6 @@ console.log(elevatorDistance([3, 3]));
 console.log(elevatorDistance([5]));
 console.log(elevatorDistance([0]));
 
-function whatday(num) {
-	switch (num) {
-		case 1: return "Sunday";
-		case 2: return "Monday";
-		case 3: return "Tuesday";
-		case 4: return "Wednesday";
-		case 5: return "Thursday";
-		case 6: return "Friday";
-		case 7: return "Saturday";
-		default: return "Wrong, please enter a number between 1 and 7";
-	}
-}
-
-console.log(whatday(1));
-console.log(whatday(12));
-
 const result = str => str.match(/\d/g).reduce((f, a) => (f > a) ? 3 : (f === a) ? 1 : 0);
 
 console.log(result("2:0"));
@@ -54,8 +38,14 @@ console.log(points(["1:0", "2:0", "3:0", "4:0", "2:1", "3:1", "4:1", "3:2", "4:2
 console.log(points(["1:1", "2:2", "3:3", "4:4", "2:2", "3:3", "4:4", "3:3", "4:4", "4:4"]));
 console.log(points(["1:0", "2:0", "3:0", "4:4", "2:2", "3:3", "1:4", "2:3", "2:4", "3:4"]));
 
-function monkeyCount(n) {
-	return Array(n).fill(0).map((v, i) => i + 1).reduce((p, c, _, arr) => p + c / arr.length, 0);
-}
+console.log("---");
 
-console.log(monkeyCount(3));
+console.log(parseInt("0".match(/(?:[+-]|^)\d+/) || 1));
+console.log(parseInt("1".match(/(?:[+-]|^)\d+/) || 1));
+console.log(parseInt("-1".match(/(?:[+-]|^)\d+/) || 1));
+console.log(parseInt("12".match(/(?:[+-]|^)\d+/) || 1));
+console.log(parseInt("-321".match(/(?:[+-]|^)\d+/) || 1));
+console.log(parseInt("-x".match(/(?:[+-]|^)\d+/) || 1));
+console.log(parseInt("y".match(/(?:[+-]|^)\d+/) || 1));
+console.log(parseInt("-3alpha".match(/(?:[+-]|^)\d+/) || 1));
+console.log(parseInt("4gamma".match(/(?:[+-]|^)\d+/) || 1));

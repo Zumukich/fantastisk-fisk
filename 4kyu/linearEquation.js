@@ -1,27 +1,79 @@
-function normalize(equation) {
+function mapifySingleSide(eqSide) {
 	var resultMap = new Map();
-	var lastVar = /.*([+-]?(.+?))$/gi;
-	//	do {
-	// leszedjük az utolsó tételt az egyenletből, és beletesszük a mapbe
-	var expl = lastVar.exec(equation);
-	console.log(expl);
-	//	} while (equation.length > 0);
+	var matchFirstGroup = /^(.+?)(?=$|[+-])/gi;
+	do {
+		let firstGroup = matchFirstGroup.exec(eqSide)[0];
+		let coefficient = parseInt(firstGroup.match(/(?:[+-]|^)\d+/) || 1);
+		if (firstGroup.match(/^-\D/)) {
+			coefficient *= -1;
+		}
+		let unknown = (firstGroup.match(/[a-zA-Z]+/) || [1])[0];
+		if (!resultMap.get(unknown)) {
+			resultMap.set(unknown, 0);
+		}
+		resultMap.set(unknown, resultMap.get(unknown) + coefficient);
+		eqSide = eqSide.replace(matchFirstGroup, "");
+	} while (eqSide.length > 0);
 	return resultMap;
 }
 
-function solve(equations) {
-	for (let i = 0; i < equations.length; i++) {
-		var [leftSide, rightSide] = equations[i].split("=");
-		var leftMap = normalize(leftSide);
-		var rightMap = normalize(rightSide);
-		console.log(leftMap, rightMap);
+function normalizeEquation(equation) {
+	let [leftSide, rightSide] = equation.split("=");
+	let leftMap = mapifySingleSide(leftSide);
+	let rightMap = mapifySingleSide(rightSide);
+	let eqMap = new Map();
+	for (let [key, value] of leftMap) {
+		eqMap.set(key, value);
 	}
-	return equations;
+	for (let [key, value] of rightMap) {
+		if (!eqMap.get(key)) {
+			eqMap.set(key, 0);
+		}
+		eqMap.set(key, eqMap.get(key) + value * -1);
+	}
+	eqMap.forEach((value, key, map) => { if (value === 0) map.delete(key) });
+	eqMap.get(1) ? eqMap.set(1, eqMap.get(1) * -1) : eqMap.set(1, 0);
+	return eqMap;
 }
 
-console.log(solve(["2x=4"]));
-console.log(solve(["2x+8y=4", "-x+4y=14"]));
-console.log(solve(["x=4y", "2x=8y", "x+y=5"]));
+function solve(equations) {
+
+	// TODO: Don't access out-of-scope variable
+	function loadVarMatrix(value, key) {
+		if (coefficients[0].indexOf(key) === -1) {
+			coefficients[0].push(key);
+			coefficients[coefficients.length - 1].push(value);
+		}
+		coefficients[coefficients.length - 1][coefficients[0].indexOf(key)] = value;
+	}
+
+	var coefficients = [[]];
+	var rightSides = [0];
+	for (let i = 0; i < equations.length; i++) {
+		const eqPos = equations[i].indexOf("=");
+		if (eqPos === -1 || eqPos === 0 || eqPos === equations[i].length - 1) {
+			return null;
+		}
+		var [varMap, result] = normalizeEquation(equations[i]);
+		coefficients.push(Array(coefficients[0].length).fill(0));
+		varMap.forEach(loadVarMatrix);
+		rightSides.push(result);
+	}
+	rightSides.forEach((e, i) => coefficients[i].push(e));
+	var variables = coefficients.shift().splice(0, coefficients[0].length - 1);
+
+	return coefficients;
+}
+
+module.exports = {
+	getSideMap: mapifySingleSide,
+	normalizeEquation
+}
+
+console.log(solve(["2x-y+3x=-2y+3x+9y", "x+y=1"]));
+// console.log(solve(["2x=4"]));
+// console.log(solve(["2x+8y=4", "-x+4y=14"]));
+// console.log(solve(["x=4y", "2x=8y", "x+y=5"]));
 // console.log(solve(["x+y=7z-1", "6x+z=-3y", "4y+10z=-8x"]));
 // console.log(solve(["2alpha+8beta=4", "-alpha+4beta=14"]));
 // console.log(solve(["2x=8y", "x+y=5"]));
@@ -30,30 +82,62 @@ console.log(solve(["x=4y", "2x=8y", "x+y=5"]));
 // console.log(solve(["x+2y=1", "2x=2-4y"]));
 // console.log(solve(["x+y=1", "2x+2y=2"]));
 
-// console.log(solve((['6x+61r+31z+15s+26s-13u-13t+20y-28p-27y-12760-11u+10y-20r-117v+23w=-50s-32v+6s-36p-49y-20v',
-// 	'-41w+70q-15r-65r+91v-32+44z-93u+74y+41p-51s+85t+26x=20t+22x-55x+9x-20q',
-// 	'-24q-277-92p+12y-65t+22r-77u+12z+51s-13x+47v-149+89w+57t=-39s-42q-37t',
-// 	'-4735-93u-88p+31w-64v+42s+27q+64z+19r-18t+91y-75r-51x-14q-14371=-26p-q-11w-57q-27z-23t',
-// 	'-81+25u+21z+45y+74t+45s+48x+6w-71p+31v+26v-221-22u-r+14q=-15r-25w-68q+124',
-// 	'13r-26w-69w-94u+40y+64v-12s-81q-76+10s-75p+53x-67t=-39x+3y-63s',
-// 	'49z+67y-62t+10q-23s-39r-54q+92x-98u-85w-13v-6602+50p+5y=-29u',
-// 	'-5z+99r+28u+34s-38q+56q-12v+57x-85v-7p+15p-24w-4y-5391-40t=8t+43p+6u+1756',
-// 	'-7p+64s-45u-23t+88q-34v+21y-94z+66r-32w+54x-2r-9380=-42w+5x-24z-27v+3149-12t+7u',
-// 	'-12s+39x-25q+3497-51q-18r+43z-73t-80u+73y+59p-38y+75v+78w-10z=-17v-10w-1123',
-// 	'-44t-42y-31r+78u-21u+58x+9s+31y+6p+93v+7055+62z-31q+83q-59y-96w-36x+14x-45r=-20r-42r+20u+42p-32w']));
+// Solvable
+// console.log(solve(['-42s-z-28u-932-66r-54q+21q+32v-39z-2635+92t-29w-52y+16p+33p+35w+29p+51x+35z-28u-25q=32q-28y+11z-23s',
+// 	'-1640+13y-62v-4851+17x-9s+30u-17t+13q+36w-104z-11r+15p=-65u-56t-22z-2w-21v',
+// 	'14u+18x-17484-31p+78u+17z+39y-80q+33w+12v-78t-5841-67p+71z+54r-78s=-4x+5x-59y',
+// 	'34u+22v-50z+6z-18u-5852+32x-68q+37t-40q+5p-45w+93s-48r-22x=-30v-21t+10s+2v-38q-39q',
+// 	'-38r+16p-51v+3447+36s-50y+36p+14x+90w-72s-7x-77u+10385+14p-80z-60t+43q=-2u+39q+4x',
+// 	'28q-90t-27v-71y-30x-32r-13z-2779-23v-74w+20p-53q-12s+58u=-40r-50x+958+26z',
+// 	'-10z+73v+19z-2t-17y-64y+99w+38r+8203+26x-69u-47p+73s+45q=30s-37x-2735',
+// 	'29v+48u+2742-70z+44p-3s+5w+29v+1399-66t+39y+1376-24y-25q-97x+53r+10z+57s=14p-v-35w+26q',
+// 	'30t-94s-93v+52w-38z-8w+27q+51y+19p+28r-9t+1591-u-15x=45r-13w+5y-536-33s-26y',
+// 	'10z+40y-19v-118s-62x-83r-58w+32p+23s-68q+10p-14t-38z+2u+31t-10856=-16q+46y+3632+5z+13p+42p-27v',
+// 	'-40y+20y-73z-27r-8s+26w-28u-84p+54t-90v-3q-535+46x-1417=41w-26s+35t+46x']));
 
-// console.log(solve(['3436+7s+22u-42v-4v-57y+100t+27x+46+42y+3455-10w-59z-47r+11s+3409+3463-38p-63q=-14p+13t+r+9z',
-// 	'67y-23p+66u-75t-6v+18q-11r-26s+16q-86x-138-112q-6z+85w+31q=-58p-26p+26+30y',
-// 	'8z+82z+12u+92q+108p+9r-7x-7t-20v+4w+54s-3q+40y+82u+62t-13p-46r-11325=3825',
-// 	'64x-24t-47y+16x-10w-5v-65r-77s+62p-22q-18485-5u+93w+59z-2r+100q=',
-// 	'11v+6r+t+3w+z+43p+80x+2w-4067-12390-39s+64u-73y+16q+30s-32u=-64q-54u+12u+27t',
-// 	'3x+34v+105w+27p+6q-30r+82u+67v+33q+10954-85z-77s+12x-15w-41p+82t-89y-6w=50q+38p+17v+15t+14p',
-// 	'-31p-87s-74z-18w+46w-9q-58y+54x+77v-168+7r+8s-17t-2u=-55r-26y-43t+10t',
-// 	'81r-62z+13687-42p-92v+w-20x+17s-12q-45y+49u+90t=-8x-40s-19y+12y-3q',
-// 	'24s-12r-92u-1806+13t-75p+101z-23w-39x-44s+8q+22v+10p-55v+7y+39w=-54q+27z+634+63t+44t',
-// 	'-29w-31p+49q-65x-57u+2s+43v-u-55z-15t+9y+32q-56r-51w+7822=-37x+12r-23y',
-// 	'-21s-79v+86p+5x+43r+31q-81y-71s+50w-40w-97t+20z+41x-21842-2u=-6v']));
+// Zero as solution
+// console.log(solve(['-98q+17u+81w-59s-76u-3p-11z+18t-41x-w-82y+68v+46t-83z-4691-r=2355+2326',
+// 	'-x+44u-69s+p-51v-43q-85r+71t-32y-1413+6z-33p+67w=56y-17q-18p+60p',
+// 	'-17q+17y-37z-43r+15p+47r-100v+3220+6318+15t+15v-55r-19w+50s-24s-55t+14q-75u=-68t-64x-3168-66p-51t',
+// 	'-3t+23v+12v+75p-72q-69x-44r+24r-36u+38x+8v+15s+3509+28y+30s+10413-55w-52z=-12t-35s-48t-12p',
+// 	'18w-7346+65r+26t+z+64x-10v-36q-14p-22u+9s+56y+22u+59q-22t=8s+17p-11z-11p-31w',
+// 	'4505-46w-78s-51v+11z-6x-10r+94p-72u+46q-20u+6x+48w-24t+44r+3y+21z=-27y+43r-33w+y+17r',
+// 	'9v+6050-45z+21y-47v+32y+81p+25r+10v+3086+54t-5q+3050+62s+41u-35w+35z+28x=-15z-14r',
+// 	'-59u-97r+r+29q-2t-53z-28x-21p+52p-35q-16y+4395+2y-60v+31x-20s+37w-11u=-6u-1489',
+// 	'13u+37p+6840-41w-50t+86z+4x-23w-17v-50u-19q+16y-56r+56s+62x-27r=44t+30s+17y+8p-32q',
+// 	'-93r+70w+106q-67z+78p+33x-11p+44u-67t-9y-7v-15s+22t+26r-8x+21z-6564=9q-3x-61s-64v',
+// 	'-35u-80q-32r+15w-90t+71p-85z-204-63u-72y-112v+29x-556+67s=-26v+2x-27w+17x-26x']));
 
+// Not enough equations
+// console.log(solve(['-14s-34v+90u+38x-58y-54w+67q+5w-37s+47t+11r-10z-45z+17p-8545=6z-36v+2798+24t+15s',
+// 	'41y+53q-18z+39x+16w-1887+11y-6v-39y+21s-17t-43u+3v+31p-51u-28r=-s-4x-30w+49p-11t',
+// 	'-39q-46y+59s+75t+24w+21y-33s+60v+76x+4146+29u+55w+90p+87r+58z=11t+10s+30u',
+// 	'-65w-4z+19p-63v+68t-20y-57p-3142+34x+14y-90q+95s-76z+69u-1573-20s+20s-5r+9u=1619-17r-17t+7x',
+// 	'74w+64p-8608+17z-7y-84r+41t+13v-6z+98q-22y+35u-13w-56x-64v-51s=-36r',
+// 	'51v-59p+11z-44v+91q+54y-60w-12q+69x-73s+5375+34r+25y-98u+11t=-33r-2682-17w-2700',
+// 	'-37t+68p+68z-7z+22918-73r-47s+89v-17u+23p+36s-11t-61x-45w-33q+90y+2z=-38z+23v-53q+42v+8z+65u+39w',
+// 	'-111z+15z+91t-24y+38x+52s-2010-1062+60r+10u+63v+49p-9u-19x-15u+9q-47w+28s=32t+34p+1060']));
+
+// Solvable with related equations
+// console.log(solve(['-37y-17x-51t-6760-20u-33q-15w-91s-4v+10w-54z-15u+12p-66r+34y=12x+14q-17s-5y',
+// 	'8v+92p+q-17w+97q-62x+84s-51v-90u-33r-27t-89y+32z+4237=-20v+23t-52v-54w',
+// 	'-83t-69v-97z+584+19p-91q-102s-2x+30u+33v-80y-13r+36w=-26s+3r-176-62w',
+// 	'-35u-25s-20p-13t+19345-38q+36s-54u-63v+63y-25z+90x+74w-67z+60r=-34y+15v',
+// 	'-35r-144v-320y-364q+29p-388z-266s+58p-332t+392w+120u+14r-38s-8x+3040-43r=11p',
+// 	'14669+85t-27v+45u+43p-26z+59w-44x+56q+31s+20s+21r+51y=18y-23w-4826',
+// 	'-11v-11y+28t+69z+95w+25u+58p+18r-4u+24z+31v-11t+32s+21s-21x+25s+4017-32x-67q=-1325-49t+9w',
+// 	'-119s+105r-77s+34584+279v-164z+10x+231w+10p+68p-23s+83q-4u-154y+37q-212u-3t-58z=-26x+89y-36t',
+// 	'356z+168r-131p+356q+140u-16w-124s+56t+32y-307v+12y+8t-24x-7767=85v+2589+33p',
+// 	'-31y+12x+35r-74z-54s+77w+11t+101v-72u-8v+26p+10q-16y+11528=19s+34y-30q',
+// 	'5p+18v-45x-73y-27r-95u-6s+21q+50w+42z-747+5p-27q-6v-15t=-4z+49p+30v-35w+21w',
+// 	'-244u+58v-152r-272x-30s+44t+219q+30936+12w+3s-340z-181y-87y-5s+258v-292p=-93q+40s',
+// 	'56v+27v-32t+96p+693-93z-41r+8y-96x+30u-88q-119w+19s=-22w+14p-28r',
+// 	'189r+765t+163p+738w-234z-108x-288x+134p+459s+131y+131582+504q+405u-145v=98v-43873-115y-90p-51y',
+// 	'101v-164y+9525-251r+288z+610s-377t-456x-561u+828p+882q+333w+100v-637y+60v+19055=-146s+73t+102x+46r+249u-9553',
+// 	'-67y+37v+3w-49x-38r+1904-85z+11t-18s+5830-19x-85p+78q-61u=-19v-29p-23v+17p',
+// 	'16t+35u+22y-98v+33r+5x-4w+89q-3x+9r+89z-8x-11y-2589-41p-43s=-12s']));
+
+// Large solvable system
 // console.log(solve(['66e-12m+3914+71z-56i-38p-81b+25n-23j-39s+27v-28h-41l+17l+24k-14x-52o-26w+31c+38r+13p+30q+80m-31n-54h-25m+66g+11935+95f-35i+85a+25y-43s-67t+14e+96u-29w-60d=43g-45d-59d+19y-42p-10j+25c',
 // 	'-76e+12038-2l+10m+49r-13o-39n+23u+3973-29g+59s-17n+18a-97x-50l-26m-29w+10z+66z-85i-21k+48q-73h-27w-57y+39k-28v+16x-30j+2t-3f-44j+9b-46k-43p-79c+94d+104g=-33b-20v+19j-35q+6b+44a+2n-17j+36p+29d+32z-44r+31u',
 // 	'-29o+83t-6e+26j+8e+59k-24c+33x+28q+37h-78s+3f-17u-83r+16d+3f+32n+10l+63y+23n+54x+72g+13w+54v-41b-31g-22p-85m-19i-2858+88z+41l+30u+84a+49o-49h=29k+31z+45v+6t-23m+33e+45i',
@@ -80,3 +164,6 @@ console.log(solve(["x=4y", "2x=8y", "x+y=5"]));
 // 	'43q+76m+33b+80t-4y-4765+33d+59n-98l+51z+28g-38d+25u+61v+31f-16b-15c+90a-45h+48e-49r+92w+32l+28k+13p+74y+27j-8x+17s-97o-72q+89c+32i+36r=2338+2368-69k+24d-8d+2w-44d',
 // 	'43p+39b-43z+19k+72r-96w-86f-92s-68d+69l+55y+80n+3261-103a-24e-8v+56h-31q+55o-6s-61g+59m+38i+49u+105c-17c+29x-34v+25a+41x-69j-97t=-5q+24d-17u+10f+62e-23m-32p-8w+9c-24d-43h-24l-53q-1070+34z-7r',
 // 	'-78q-22i+44a+37u+59w+20n+35f-40j-45r+40m-14h-83k+x+20r-13w+59l-60r+17q+1838-74c+36s-43o-5i-29p-78z-4c-15e-8g-23y+24w+21r+7e+90d+2v+8b-17n+64t+28f+35n=3x+g-2w+25s+56y+33l-19u+16b+5d+4h+58p']));
+
+// https://www.codewars.com/kata/linear-equation-solver
+// 4 kyu

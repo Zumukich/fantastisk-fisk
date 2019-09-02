@@ -1,20 +1,22 @@
+let gcd = (a, b) => a ? gcd(b % a, a) : b;
+
 function mapifySingleSide(eqSide) {
-	var resultMap = new Map();
-	var matchFirstGroup = /^(.+?)(?=$|[+-])/gi;
+	let sideMap = new Map();
+	let matchFirst = /^(.+?)(?=$|[+-])/gi;
 	do {
-		let firstGroup = matchFirstGroup.exec(eqSide)[0];
-		let coefficient = parseInt(firstGroup.match(/(?:[+-]|^)\d+/) || 1);
-		if (firstGroup.match(/^-\D/)) {
+		let firstTerm = matchFirst.exec(eqSide)[0];
+		let coefficient = parseInt(firstTerm.match(/(?:[+-]|^)\d+/) || 1);
+		if (firstTerm.match(/^-\D/)) {
 			coefficient *= -1;
 		}
-		let unknown = (firstGroup.match(/[a-zA-Z]+/) || [1])[0];
-		if (!resultMap.get(unknown)) {
-			resultMap.set(unknown, 0);
+		let unknown = (firstTerm.match(/[a-zA-Z]+/) || [1])[0];
+		if (!sideMap.get(unknown)) {
+			sideMap.set(unknown, 0);
 		}
-		resultMap.set(unknown, resultMap.get(unknown) + coefficient);
-		eqSide = eqSide.replace(matchFirstGroup, "");
+		sideMap.set(unknown, sideMap.get(unknown) + coefficient);
+		eqSide = eqSide.replace(matchFirst, "");
 	} while (eqSide.length > 0);
-	return resultMap;
+	return sideMap;
 }
 
 function normalizeEquation(equation) {
@@ -33,19 +35,29 @@ function normalizeEquation(equation) {
 	}
 	eqMap.forEach((value, key, map) => { if (value === 0) map.delete(key) });
 	eqMap.get(1) ? eqMap.set(1, eqMap.get(1) * -1) : eqMap.set(1, 0);
-	return eqMap;
+	let reduceFactor = Math.abs(Array.from(eqMap.values()).reduce(gcd));
+	if (reduceFactor > 1) {
+		for (let [key, value] of eqMap) {
+			eqMap.set(key, value / reduceFactor);
+		}
+	}
+	return new Map([...eqMap.entries()].sort());
 }
 
-function solve(equations) {
+function matrixifyEquations(equations) {
+	// TODO create matrix
+	// TODO remove duplications
+	// TODO pivot positions: prefer 1's
+	// TODO pivot positions: avoid zeroes
 
-	// TODO: Don't access out-of-scope variable
-	function loadVarMatrix(value, key) {
-		if (coefficients[0].indexOf(key) === -1) {
-			coefficients[0].push(key);
-			coefficients[coefficients.length - 1].push(value);
+	/* 	function loadVarMatrix(value, key) {
+			if (coefficients[0].indexOf(key) === -1) {
+				coefficients[0].push(key);
+				coefficients[coefficients.length - 1].push(value);
+			}
+			coefficients[coefficients.length - 1][coefficients[0].indexOf(key)] = value;
 		}
-		coefficients[coefficients.length - 1][coefficients[0].indexOf(key)] = value;
-	}
+	 */
 
 	var coefficients = [[]];
 	var rightSides = [0];
@@ -53,17 +65,23 @@ function solve(equations) {
 		var varMap = normalizeEquation(equations[i]);
 		coefficients.push(Array(coefficients[0].length).fill(0));
 		varMap.forEach(loadVarMatrix);
-		rightSides.push(result);
 	}
 	rightSides.forEach((e, i) => coefficients[i].push(e));
 	var variables = coefficients.shift().splice(0, coefficients[0].length - 1);
 
-	return coefficients;
+
+	return solutionMatrix;
+}
+
+function solve(equations) {
+	let eliminationMatrix = matrixifyEquations(equations);
+	return eliminationMatrix;
 }
 
 module.exports = {
-	getSideMap: mapifySingleSide,
-	normalizeEquation
+	mapifySingleSide,
+	normalizeEquation,
+	matrixifyEquations
 }
 
 console.log(solve(["2x=4"]));

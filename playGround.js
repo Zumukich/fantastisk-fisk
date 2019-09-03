@@ -36,12 +36,12 @@ console.log(arr.reduce(gcd));
 
 console.log("---");
 
-let tryMap = new Map();
-tryMap.set("faszom", [1, 2, 3, 4]);
-tryMap.set("szekreny", [2, 1, 2, 4]);
-tryMap.set(1, [0, 3, 1, 2]);
+let tryArrFull = [1, "b", "d"];
+let tryArrEmpty = [];
+let element = "c";
 
-tryMap.get("faszom").push(2);
+let tryArr = tryArrEmpty;
 
-console.log(tryMap);
-console.log(typeof(tryMap.get("faszom")), tryMap.get("faszom"));
+let pos = tryArr.findIndex(e => e > element);
+
+console.log(pos);

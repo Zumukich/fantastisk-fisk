@@ -46,46 +46,30 @@ function normalizeEquation(equation) {
 }
 
 function matrixifyEquations(equations) {
-	// TODO create matrix
-	// TODO remove duplications
-	// TODO pivot positions: prefer 1's
-	// TODO pivot positions: avoid zeroes
+	// ✔ create matrix
+	// ✘ order by unknowns
+	// ✘ remove duplications
+	// ✘ pivot positions: prefer 1's
+	// ✘ pivot positions: avoid zeroes
 
-	/* 	function loadVarMatrix(value, key) {
-			if (coefficients[0].indexOf(key) === -1) {
-				coefficients[0].push(key);
-				coefficients[coefficients.length - 1].push(value);
-			}
-			coefficients[coefficients.length - 1][coefficients[0].indexOf(key)] = value;
-		}
-	 */
-
-	let equationSystem = new Map();
+	let equationSystem = [[]];
 	for (let i = 0; i < equations.length; i++) {
 		let equationMap = normalizeEquation(equations[i]);
-
-		// minden lepesben minden meg nem letezo valtozohoz letrehozunk egy megfelelo hosszusagu oszlopot
+		let curLine = equationSystem.push(Array(equationSystem[0].length).fill(0)) - 1; // beteszünk egy új sort az új egyenletnek
+		// console.log("Kiindulási állapot \n", equationSystem, "Sor: ", curLine);
 		for (let [key, value] of equationMap) {
-			if (!equationSystem.get(key)) {
-				equationSystem.set(key, Array(i).fill(0));
-//				console.log("Igy all az osszesitett map: ", equationSystem);
+			if (equationSystem[0].indexOf(key) === -1) {
+				// keressük meg a kulcs beszúrási pozícióját
+				// ha -1, akkor szúrjuk be elsőként
+				// amúgy meg szúrjuk be az őt megillető helyre
+				equationSystem = equationSystem.map(ar => ar.concat([0])); // nem létező változó esetén bővítsük az összes oszlopot jobbra
+				// console.log(`Nem létező kulcs: ${key}, oszlopok beszúrva: \n`, equationSystem);
+				equationSystem[0][equationSystem[0].length - 1] = key; // tegyük be az új oszlop fejlécét a tetejére
 			}
-			// az oszlopok végére fűzzük az aktuális elemet (kiolvassuk - hozzáfűzünk - beállítjuk)
-			equationSystem.set(key, equationSystem.get(key).concat([value]));
-//			console.log(value);
+			equationSystem[curLine][equationSystem[0].indexOf(key)] = value; // ...majd az új oszlop tartalmát az utolsó sorba
+			// console.log("Map az uj kulccsal és értékkel \n", equationSystem);
 		}
-		console.log("Igy all az osszesitett map: ", equationSystem);
-
 	}
-
-	// ezen a ponton kell lekonvertálni az egészet egy "rendes" mátrixszá...
-
-/* 	var coefficients = [[]];
-	var rightSides = [0];
-	rightSides.forEach((e, i) => coefficients[i].push(e));
-	var variables = coefficients.shift().splice(0, coefficients[0].length - 1);
- */
-
 	return equationSystem;
 }
 

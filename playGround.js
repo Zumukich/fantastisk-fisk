@@ -1,18 +1,10 @@
-countWord = s => (s.match(/w.*?o.*?r.*?d/gi) || []).length
+// countWord = s => (s.match(/w.*?o.*?r.*?d/gi) || []).length
 
 // console.log(countWord("word"));
 // console.log(countWord("WORD"));
 // console.log(countWord("hello world"));
 // console.log(countWord("woahr dnkwnoyrn sdo"));
 // console.log(countWord("faszkalap"));
-
-function hello(name) {
-	var greeting = !name || name === "" ? "World" : name.replace(/(.)(.+)/, (match, p1, p2) => p1.toUpperCase() + p2.toLowerCase());
-	return `Hello ${greeting}!`;
-}
-
-console.log(hello('johN'));
-console.log(hello('alice'));
 
 console.log("---");
 

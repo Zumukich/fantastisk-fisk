@@ -41,6 +41,7 @@ function normalizeEquation(equation) {
 			eqMap.set(key, value / reduceFactor);
 		}
 	}
+	console.log(eqMap);
 	return new Map([...eqMap.entries()].sort());
 }
 
@@ -59,18 +60,33 @@ function matrixifyEquations(equations) {
 		}
 	 */
 
-	var coefficients = [[]];
-	var rightSides = [0];
+	let equationSystem = new Map();
 	for (let i = 0; i < equations.length; i++) {
-		var varMap = normalizeEquation(equations[i]);
-		coefficients.push(Array(coefficients[0].length).fill(0));
-		varMap.forEach(loadVarMatrix);
+		let equationMap = normalizeEquation(equations[i]);
+
+		// minden lepesben minden meg nem letezo valtozohoz letrehozunk egy megfelelo hosszusagu oszlopot
+		for (let [key, value] of equationMap) {
+			if (!equationSystem.get(key)) {
+				equationSystem.set(key, Array(i).fill(0));
+//				console.log("Igy all az osszesitett map: ", equationSystem);
+			}
+			// az oszlopok végére fűzzük az aktuális elemet (kiolvassuk - hozzáfűzünk - beállítjuk)
+			equationSystem.set(key, equationSystem.get(key).concat([value]));
+//			console.log(value);
+		}
+		console.log("Igy all az osszesitett map: ", equationSystem);
+
 	}
+
+	// ezen a ponton kell lekonvertálni az egészet egy "rendes" mátrixszá...
+
+/* 	var coefficients = [[]];
+	var rightSides = [0];
 	rightSides.forEach((e, i) => coefficients[i].push(e));
 	var variables = coefficients.shift().splice(0, coefficients[0].length - 1);
+ */
 
-
-	return solutionMatrix;
+	return equationSystem;
 }
 
 function solve(equations) {
@@ -84,7 +100,8 @@ module.exports = {
 	matrixifyEquations
 }
 
-console.log(solve(["2x=4"]));
+console.log(solve(["-y=-4z", "-x+4=8z-1", "6y-10x-2=0", "3x+2y-4z=5"]));
+// console.log(solve(["2x=4"]));
 // console.log(solve(["2x+8y=4", "-x+4y=14"]));
 // console.log(solve(["x=4y", "2x=8y", "x+y=5"]));
 // console.log(solve(["x+y=7z-1", "6x+z=-3y", "4y+10z=-8x"]));

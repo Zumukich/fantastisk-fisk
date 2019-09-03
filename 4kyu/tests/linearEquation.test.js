@@ -235,8 +235,6 @@ describe("Equation normalization tests", function () {
 	});
 });
 
-
-/*
 describe("Equation system construction tests", function () {
 	it("Should include all equations", function () {
 		let result = matrixifyEquations(["x+y=7z-1", "6x+z=-3y", "4y+10z=-8x"]);
@@ -250,17 +248,11 @@ describe("Equation system construction tests", function () {
 		let result = matrixifyEquations(["3x-4y+2z=-4", "-2x+y=1-2z", "x+2y=2+6z"]);
 		assert.deepStrictEqual(result, [["x", "y", "z", 1], [1, 2, -6, 2], [-2, 1, 2, 1], [3, -4, 2, -4]]);
 	});
+	it("Should swap equations to avoid 0 in pivot positions", function () {
+		let result = matrixifyEquations(["-y=-4z", "-x+4=8z-1", "6y-10x-2=0", "3x+2y-4z=5"]);
+		assert.deepStrictEqual(result, [["x", "y", "z", 1], [-1, 0, -8, -5], [0, -1, 4, 0], [3, 2, -4, 5], [-5, 3, 0, 1]]);
+	});
 });
-
-// Nincs 0 pivotban
-// Oszlopot is tud cserélni?
-
-x=1
-y=2
-z=0.5
-
-
-*/
 
 /*
 	describe("Equations", function () {

@@ -41,3 +41,15 @@ let gcd = (a, b) => a ? gcd(b % a, a) : b;
 let arr = [0, 4, 8, 10];
 
 console.log(arr.reduce(gcd));
+
+console.log("---");
+
+let tryMap = new Map();
+tryMap.set("faszom", [1, 2, 3, 4]);
+tryMap.set("szekreny", [2, 1, 2, 4]);
+tryMap.set(1, [0, 3, 1, 2]);
+
+tryMap.get("faszom").push(2);
+
+console.log(tryMap);
+console.log(typeof(tryMap.get("faszom")), tryMap.get("faszom"));

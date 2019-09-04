@@ -228,11 +228,6 @@ describe("Equation normalization tests", function () {
 		assert.strictEqual(result.get("z"), -5);
 		assert.strictEqual(result.get(1), 1);
 	});
-	it("Should sort variables", function () {
-		let result = normalizeEquation("34u+22v-50z+6z-18u-5852+32x-68q+37t-40q+5p-45w+93s-48r-22x=-30v-21t+10s+2v-38q-39q");
-		assert.strictEqual(result.size, 11);
-		assert.deepStrictEqual([...result.keys()], [1, 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'z']);
-	});
 });
 
 describe("Equation system construction tests", function () {

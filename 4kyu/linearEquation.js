@@ -41,13 +41,12 @@ function normalizeEquation(equation) {
 			eqMap.set(key, value / reduceFactor);
 		}
 	}
-	console.log(eqMap);
-	return new Map([...eqMap.entries()].sort());
+	return eqMap;
 }
 
 function matrixifyEquations(equations) {
 	// ✔ create matrix
-	// ✘ order by unknowns
+	// ✔ order by unknowns
 	// ✘ remove duplications
 	// ✘ pivot positions: prefer 1's
 	// ✘ pivot positions: avoid zeroes
@@ -55,20 +54,21 @@ function matrixifyEquations(equations) {
 	let equationSystem = [[]];
 	for (let i = 0; i < equations.length; i++) {
 		let equationMap = normalizeEquation(equations[i]);
-		let curLine = equationSystem.push(Array(equationSystem[0].length).fill(0)) - 1; // beteszünk egy új sort az új egyenletnek
-		// console.log("Kiindulási állapot \n", equationSystem, "Sor: ", curLine);
+		let curLine = equationSystem.push(Array(equationSystem[0].length).fill(0)) - 1;
 		for (let [key, value] of equationMap) {
 			if (equationSystem[0].indexOf(key) === -1) {
-				// keressük meg a kulcs beszúrási pozícióját
-				// ha -1, akkor szúrjuk be elsőként
-				// amúgy meg szúrjuk be az őt megillető helyre
-				equationSystem = equationSystem.map(ar => ar.concat([0])); // nem létező változó esetén bővítsük az összes oszlopot jobbra
-				// console.log(`Nem létező kulcs: ${key}, oszlopok beszúrva: \n`, equationSystem);
-				equationSystem[0][equationSystem[0].length - 1] = key; // tegyük be az új oszlop fejlécét a tetejére
+				let existingPos = equationSystem[0].findIndex(e => e > String(key));
+				let insertPos = (existingPos === -1) ? equationSystem[0].length : existingPos;
+				for (let subArr of equationSystem) {
+					subArr.splice(insertPos, 0, 0);
+				}
+				equationSystem[0][insertPos] = key;
 			}
-			equationSystem[curLine][equationSystem[0].indexOf(key)] = value; // ...majd az új oszlop tartalmát az utolsó sorba
-			// console.log("Map az uj kulccsal és értékkel \n", equationSystem);
+			equationSystem[curLine][equationSystem[0].indexOf(key)] = value;
 		}
+	}
+	for (let subArr of equationSystem) {
+		subArr.push(subArr.shift());
 	}
 	return equationSystem;
 }

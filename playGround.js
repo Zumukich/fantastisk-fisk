@@ -36,12 +36,21 @@ console.log(arr.reduce(gcd));
 
 console.log("---");
 
-let tryArrFull = [1, "b", "d"];
-let tryArrEmpty = [];
-let element = "c";
+let halmaz = new Set();
 
-let tryArr = tryArrEmpty;
+var arr1 = [1, 2, 3, 4, 5, 6, 7];
+var arr2 = [2, 3, 4, 5, 6, 7];
+var arr3 = [1, 3, 4, 5, 6, 7];
+var arr4 = [1, 2, 4, 5, 6, 7];
+var arr5 = [1, 2, 3, 4, 5, 6, 7];
 
-let pos = tryArr.findIndex(e => e > element);
+halmaz.add(arr1.join("/"));
+halmaz.add(arr2.join("/"));
+halmaz.add(arr3.join("/"));
+halmaz.add(arr4.join("/"));
 
-console.log(pos);
+console.log(halmaz);
+
+halmaz.add(arr5.join("/"));
+
+console.log(halmaz);

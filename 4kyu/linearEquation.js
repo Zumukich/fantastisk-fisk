@@ -1,4 +1,44 @@
-let gcd = (a, b) => a ? gcd(b % a, a) : b;
+const getGCD = (x, y) => x ? getGCD(y % x, x) : y;
+const getLCM = (x, y) => Math.abs(x) / getGCD(x, y) * Math.abs(y);
+
+function reduceFraction(fraction) {
+	let [numerator, denominator] = fraction.split("/");
+	let gcd = getGCD(numerator, denominator);
+	return numerator % denominator === 0 ? numerator / denominator : `${(numerator / gcd).toString()}/${(denominator / gcd).toString()}`;
+}
+
+function splitFraction(number) {
+	let numerator = (number === parseInt(number)) ? number : parseInt(number.split("/")[0]);
+	let denominator = (number === parseInt(number)) ? 1 : parseInt(number.split("/")[1]);
+	return [numerator, denominator];
+}
+
+function addIntOrFraction(number1, number2) {
+	let [numerator1, denominator1] = splitFraction(number1);
+	let [numerator2, denominator2] = splitFraction(number2);
+	let commonDenominator = getLCM(denominator1, denominator2);
+	let commonNumerator = commonDenominator / denominator1 * numerator1 + commonDenominator / denominator2 * numerator2;
+	//	let gcd = getGCD(commonNumerator, commonDenominator);
+	return commonNumerator.toString().concat("/").concat(commonDenominator.toString());
+}
+
+function subtractIntOrFraction(number1, number2) {
+	let [numerator1, denominator1] = splitFraction(number1);
+	let [numerator2, denominator2] = splitFraction(number2);
+	return number1 - number2;
+}
+
+function multiplyIntOrFraction(number1, number2) {
+	let [numerator1, denominator1] = splitFraction(number1);
+	let [numerator2, denominator2] = splitFraction(number2);
+	return number1 * number2;
+}
+
+function divideIntOrFraction(number1, number2) {
+	let [numerator1, denominator1] = splitFraction(number1);
+	let [numerator2, denominator2] = splitFraction(number2);
+	return number1 / number2;
+}
 
 function mapifySingleSide(eqSide) {
 	let sideMap = new Map();
@@ -35,7 +75,7 @@ function normalizeEquation(equation) {
 	}
 	eqMap.forEach((value, key, map) => { if (value === 0) map.delete(key) });
 	eqMap.get(1) ? eqMap.set(1, eqMap.get(1) * -1) : eqMap.set(1, 0);
-	let reduceFactor = Math.abs(Array.from(eqMap.values()).reduce(gcd));
+	let reduceFactor = Math.abs(Array.from(eqMap.values()).reduce(getGCD));
 	if (reduceFactor > 1) {
 		for (let [key, value] of eqMap) {
 			eqMap.set(key, value / reduceFactor);
@@ -44,13 +84,7 @@ function normalizeEquation(equation) {
 	return eqMap;
 }
 
-function matrixifyEquations(equations) {
-	// ✔ create matrix
-	// ✔ order by unknowns
-	// ✘ remove duplications
-	// ✘ pivot positions: prefer 1's
-	// ✘ pivot positions: avoid zeroes
-
+function createEqMatrix(equations) {
 	let equationSystem = [[]];
 	for (let i = 0; i < equations.length; i++) {
 		let equationMap = normalizeEquation(equations[i]);
@@ -67,23 +101,43 @@ function matrixifyEquations(equations) {
 			equationSystem[curLine][equationSystem[0].indexOf(key)] = value;
 		}
 	}
-	for (let subArr of equationSystem) {
-		subArr.push(subArr.shift());
-	}
 	return equationSystem;
 }
 
+function prepareEqMatrix(eqSystem) {
+	// ✔ move free terms to right
+	for (let subArr of eqSystem) {
+		subArr.push(subArr.shift());
+	}
+	// ✔ remove duplications
+	let unknownRow = [Array.from(eqSystem[0])];
+	let uniqCoeffs = [...new Set(eqSystem.slice(1).map(ar => ar.join("/")))]
+		.map(s => s.split("/"))
+		.map(ar => ar.map(e => parseInt(e)));
+	let prettyEqMatrix = unknownRow.concat(uniqCoeffs);
+	// ✘ pivot positions: prefer 1's
+	// ✘ pivot positions: avoid zeroes
+	return prettyEqMatrix;
+}
+
 function solve(equations) {
-	let eliminationMatrix = matrixifyEquations(equations);
+	let eliminationMatrix = prepareEqMatrix(createEqMatrix(equations));
 	return eliminationMatrix;
 }
 
 module.exports = {
 	mapifySingleSide,
 	normalizeEquation,
-	matrixifyEquations
+	createEqMatrix,
+	prepareEqMatrix,
+	reduceFraction,
+	addIntOrFraction,
+	subtractIntOrFraction,
+	multiplyIntOrFraction,
+	divideIntOrFraction
 }
 
+// console.log(solve(["x+y=1", "2x+2y=2", "x-3y=-3"]));
 console.log(solve(["-y=-4z", "-x+4=8z-1", "6y-10x-2=0", "3x+2y-4z=5"]));
 // console.log(solve(["2x=4"]));
 // console.log(solve(["2x+8y=4", "-x+4y=14"]));

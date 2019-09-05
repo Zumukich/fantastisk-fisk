@@ -79,14 +79,14 @@ describe("Basic operation tests", function () {
 		assert.deepStrictEqual(multiplyIntOrFraction("1231/347", "1093/8964"), "1345483/3110508");
 	});
 	it("Multiplication should handle negative numbers", function () {
-		assert.deepStrictEqual(multiplyIntOrFraction(-2, 3), -12);
+		assert.deepStrictEqual(multiplyIntOrFraction(-2, 3), -6);
 		assert.deepStrictEqual(multiplyIntOrFraction(-7, -5), 35);
 		assert.deepStrictEqual(multiplyIntOrFraction("-2/5", "12/5"), "-24/25");
 		assert.deepStrictEqual(multiplyIntOrFraction("3/5", "-11/5"), "-33/25");
 		assert.deepStrictEqual(multiplyIntOrFraction("-2563/12454", "-14431/56343"), "36986653/701695722");
 	});
 	it("Multiplication should Return Reduced Result", function () {
-		assert.deepStrictEqual(multiplyIntOrFraction(11, "5/6"), "55");
+		assert.deepStrictEqual(multiplyIntOrFraction(11, "5/6"), "55/6");
 		assert.deepStrictEqual(multiplyIntOrFraction("1/3", 4), "4/3");
 		assert.deepStrictEqual(multiplyIntOrFraction("2/3", "3/4"), "1/2");
 	});

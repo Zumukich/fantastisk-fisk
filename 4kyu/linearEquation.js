@@ -1,8 +1,8 @@
 const getGCD = (x, y) => x ? getGCD(y % x, x) : y;
 const getLCM = (x, y) => Math.abs(x) / getGCD(x, y) * Math.abs(y);
 
-function reduceFraction(fraction) {
-	let [numerator, denominator] = fraction.split("/");
+function reduceFraction(numerator, denominator) {
+//	let [numerator, denominator] = fraction.split("/");
 	let gcd = getGCD(numerator, denominator);
 	return numerator % denominator === 0 ? numerator / denominator : `${(numerator / gcd).toString()}/${(denominator / gcd).toString()}`;
 }
@@ -17,27 +17,46 @@ function addIntOrFraction(number1, number2) {
 	let [numerator1, denominator1] = splitFraction(number1);
 	let [numerator2, denominator2] = splitFraction(number2);
 	let commonDenominator = getLCM(denominator1, denominator2);
-	let commonNumerator = commonDenominator / denominator1 * numerator1 + commonDenominator / denominator2 * numerator2;
-	//	let gcd = getGCD(commonNumerator, commonDenominator);
-	return commonNumerator.toString().concat("/").concat(commonDenominator.toString());
+	console.log(`${numerator1} / ${denominator1}     ${numerator2} / ${denominator2}`);
+	return reduceFraction(commonDenominator / denominator1 * numerator1 + commonDenominator / denominator2 * numerator2, commonDenominator);
 }
+
+
+
+
+
+console.log(addIntOrFraction(-2, 5));
+console.log(addIntOrFraction(-2, "2/7"));
+console.log(addIntOrFraction("-12/5", 3));
+console.log(addIntOrFraction("-3/4", "-1/2"));
+
 
 function subtractIntOrFraction(number1, number2) {
 	let [numerator1, denominator1] = splitFraction(number1);
 	let [numerator2, denominator2] = splitFraction(number2);
-	return number1 - number2;
+	let commonDenominator = getLCM(denominator1, denominator2);
+	console.log(`${numerator1} / ${denominator1}     ${numerator2} / ${denominator2}`);
+	return reduceFraction(commonDenominator / denominator1 * numerator1 - commonDenominator / denominator2 * numerator2, commonDenominator);
 }
+
+console.log(subtractIntOrFraction(23, 49));
+console.log(subtractIntOrFraction("5/6", 1));
+console.log(subtractIntOrFraction(1, "5/6"));
+console.log(subtractIntOrFraction("73/41", "79/13"));
+
 
 function multiplyIntOrFraction(number1, number2) {
 	let [numerator1, denominator1] = splitFraction(number1);
 	let [numerator2, denominator2] = splitFraction(number2);
-	return number1 * number2;
+	console.log(`${numerator1} / ${denominator1}     ${numerator2} / ${denominator2}`);
+	return reduceFraction(numerator1 * numerator2, denominator1 * denominator2);
 }
 
 function divideIntOrFraction(number1, number2) {
 	let [numerator1, denominator1] = splitFraction(number1);
 	let [numerator2, denominator2] = splitFraction(number2);
-	return number1 / number2;
+	console.log(`${numerator1} / ${denominator1}     ${numerator2} / ${denominator2}`);
+	return reduceFraction(numerator1 * denominator2, denominator1 * numerator2);
 }
 
 function mapifySingleSide(eqSide) {

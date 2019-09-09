@@ -24,16 +24,37 @@ function subtractIntOrFraction([numerator1, denominator1], [numerator2, denomina
 }
 
 function multiplyIntOrFraction([numerator1, denominator1], [numerator2, denominator2]) {
-	if (numerator1 * numerator2 > Number.MAX_SAFE_INTEGER || denominator1 * denominator2 > Number.MAX_SAFE_INTEGER) {
-		console.log("Warn!");
+	let numGCD = getGCD(numerator1, denominator2);
+	let dnmGCD = getGCD(numerator2, denominator1);
+	if (numGCD !== 1) {
+		numerator1 /= numGCD;
+		denominator2 /= numGCD;
 	}
+	if (dnmGCD !== 1) {
+		numerator2 /= numGCD;
+		denominator1 /= numGCD;
+	}
+	//	if (numerator1 * numerator2 > Number.MAX_SAFE_INTEGER || denominator1 * denominator2 > Number.MAX_SAFE_INTEGER) {
+	//		console.log("Warn!");
+	//	}
 	return reduceFraction(numerator1 * numerator2, denominator1 * denominator2);
 }
 
 function divideIntOrFraction([numerator1, denominator1], [numerator2, denominator2]) {
+	// just don't get any -0's in the matrices...
 	if (Math.sign(numerator2) === -1) {
 		numerator1 *= -1;
 		numerator2 *= -1;
+	}
+	let numGCD = getGCD(numerator1, numerator2);
+	let dnmGCD = getGCD(denominator1, denominator2);
+	if (numGCD !== 1) {
+		numerator1 /= numGCD;
+		numerator2 /= numGCD;
+	}
+	if (dnmGCD !== 1) {
+		denominator1 /= numGCD;
+		denominator1 /= numGCD;
 	}
 	return reduceFraction(numerator1 * denominator2, denominator1 * numerator2);
 }
@@ -89,6 +110,7 @@ function normalizeEquation(equation) {
 			eqMap.set(key, value / reduceFactor);
 		}
 	}
+	//console.log(eqMap);
 	return eqMap;
 }
 
@@ -109,6 +131,7 @@ function createEqMatrix(equations) {
 			equationSystem[curLine][equationSystem[0].indexOf(key)] = value;
 		}
 	}
+	//console.log(equationSystem);
 	return equationSystem;
 }
 
@@ -130,10 +153,10 @@ function prepareEqMatrix(eqSystem) {
 		let bestCandidate = i + 1;
 		//console.log("sor száma", i + 1, "kérdéses sor", prettyEqMatrix[i + 1]);
 		// ✘ pivot positions: prefer 1's
-//		if (prettyEqMatrix[i + 1][i] !== 1 && restOfTheCol.indexOf(1) !== -1) {
-//			bestCandidate = restOfTheCol.indexOf(1);
-//			console.log("új legjobb jelölt (1)", bestCandidate, prettyEqMatrix[bestCandidate]);
-//		}
+		//		if (prettyEqMatrix[i + 1][i] !== 1 && restOfTheCol.indexOf(1) !== -1) {
+		//			bestCandidate = restOfTheCol.indexOf(1);
+		//			console.log("új legjobb jelölt (1)", bestCandidate, prettyEqMatrix[bestCandidate]);
+		//		}
 		if (prettyEqMatrix[i + 1][i] === 0) {
 			bestCandidate = restOfTheCol.findIndex(e => e !== 0) + 2;
 			//console.log("új legjobb jelölt (non-0)", bestCandidate, prettyEqMatrix[bestCandidate]);
@@ -145,9 +168,15 @@ function prepareEqMatrix(eqSystem) {
 }
 
 function solve(equations) {
+	for (let i = 0; i < equations.length; i++) {
+		const eqPos = equations[i].indexOf("=");
+		if (eqPos === -1 || eqPos === 0 || eqPos === equations[i].length - 1) {
+			equations.splice(i, 1);
+		}
+	}
 	let eliminationMatrix = prepareEqMatrix(createEqMatrix(equations));
 	if (eliminationMatrix[0].length > eliminationMatrix.length) {
-		return null; // Not enough unique equations for the number of unknowns
+		return null;
 	}
 	let unknowns = eliminationMatrix.shift();
 	//console.log(eliminationMatrix);
@@ -165,6 +194,7 @@ function solve(equations) {
 			rowFactor = multiplyIntOrFraction(splitFraction(eliminationMatrix[prevRows][curRow]), splitFraction(-1));
 			eliminationMatrix[prevRows].forEach((ent, idx, arr) => arr[idx] = addIntOrFraction(splitFraction(multiplyIntOrFraction(splitFraction(eliminationMatrix[curRow][idx]), splitFraction(rowFactor))), splitFraction(arr[idx])));
 		}
+		console.log("Sor: ", curRow, "Mátrix: \n", eliminationMatrix);
 	}
 	if (eliminationMatrix[0].length < eliminationMatrix.length) {
 		// ha van lejjebb bárhol nemnull, akkor return null
@@ -204,31 +234,85 @@ module.exports = {
 // console.log(solve(["x+2y=1", "2x=2-4y"]));
 // console.log(solve(["x+y=1", "2x+2y=2"]));
 
+// MapifyErrors
+// console.log(solve(['-19s+6z-19x-27q+84r+65y-19v+6p+26t-32t-22x-32p+w+2413+63z+6u-50v-17s=29s-6r-57u+2t-31s',
+// 	'-31z+45r-2s+2t+16869+10z-91w-48z-69p+41u+70q+87x+35y+8t-61s-9u-39v=-9w-8p',
+// 	'30x-50u+12p-7025+52t-64r-13y+15s-41v-91p+53t-93q+28z+119v-2291-28v-6t+29w=43u+2s+41s+22x+26v',
+// 	'-71r+28z+5289-29u-57v+19y-14x-54q+93p-23v-54w+59t-25r-54s=-33q+28z-18u-5x',
+// 	'78z-9s+17v-25x+13v+51u+65s-2t+44w+5x-3384+18w-60q-62w+53r-38t+99y+38p+4s-1615=1636+2t-15p',
+// 	'18y+13w-12u-q-6t-14226+14s-86u+86p+9r+49t-17p+92x-78q+4z+3w=-61v-16p',
+// 	'65z-62p-17s-14q-36w+44u+24x-20t-4w+95v-20y+715+40y+35u-83r=7y+43x',
+// 	'44t-24z-36v+116y+33z+14r+63s-97w-1636-16y-1642-6v+36q+45t+87p-1640-10q+18u+87-36x=-26s+58r+5t+1573+6z+5u',
+// 	'189z-91y+9703-3s-391p-651q-193u-133u-325u+3199+548t-162p+203w+95v-193s+35x-448r+78v=23x-44x-7z+5v-145t',
+// 	'-3v+81z+21r-33z-8x-72y-25t+10w-12494-38p+93t+30q+19u-58x+17s-30q+57u-10u=-9s',
+// 	'-4w+11q-61t+4636-63r-13r-45p+25q+29x-18r+49x+70v-24y-27u+33y-51s+53w+14u+90z=40s-3t']));
+
+// console.log(solve(['42t-21x+11q-586-10w+74z+11u-60t-74r-8t-2s+66y+26p-52v=-61s-11r+11s+202-z',
+// 	'62v-27t+26s+47y+40x+38y-2y-31q+56q-17w-80z-47u+64p+27t+79r+1125=33y-21u+37s',
+// 	'-15r+87u-74v-6459-20y-82z+46q+33p+31p-5r+57w+11t-68s-73x=38t+12q',
+// 	'12r+26p+55r+73v+9q+5s+81z+17505+6t-41u-40w+67y-19p-91x=15q-31s+32t-35u-10t',
+// 	'70u-44x-18u-7u+20169-14w+104v+53p-25z+24q+21y-88w+46x+65r-12s=-6w-16y+10v',
+// 	'-56p+105u+15t+31v+57z-54x-21q+36x-5r+31w+37r-8u+64q+18w+52s+6378-108t-2y=-21t-2157',
+// 	'-31x+52y-10r+6z-86q+70u-51x+14s-p+28943+83v-6t-89w=-2y-48r-15s',
+// 	'37v-72p+25u-12370-58z-14s+66w-61r-4171+105t+28q+56y-18v-25t+62q+27x-96x-42v=']));
+
+// console.log(solve(['-9w-41v+17955-75y-49q+17p+76t+45u+5z-17v+52x+26x+78s-77r=37v-22r-14s',
+// 	'57t-60s-15p+68y-14u+40z-29v-2841-60v-46r-36x+3p+66q+7w-1364-27z=24u+1373+8r',
+// 	'32s-14648+69w+94v-4w-29s-7u-84p-33z+35y+74t+37u+71y-72x+32q=8y',
+// 	'9815-69u+3235+4y-42z+v-27s-8q+3r+40x-62t-10p-5w=-32p-48x-8q',
+// 	'30r-98r-15x-13x-25v+4w-52y+40s+30z+56q-41v-489+22z-q-81t+23s+93u+55p=12w+14u+19v+48x',
+// 	'-20y-92s-3t+58p-42u-3897+36v-29x+47w-68z-7q+34y+64r-52w-13v-39y=1246+56t+33v+40r-11y+16q',
+// 	'34s+83v+2r-483-29y+43w-879-511+27p-4x-73u-7x-9u-7q-2z+92r+29q=',
+// 	'-77y+4z-49s+54t+30s+30t+49w-89u+24r+30q+1401+59v+16p-11q+67x+12z+4362=15z-14r+31q',
+// 	'-408r+378s+330p-350t-430v+474u-2934+312z-334x-312y+330q-48w=136t+122x+80v',
+// 	'19110+13q-28z-71u-82v-25r+53x+15v-t-39z+74s+54p-43w+48t+67y=31y-23r+9s-25r+14u+59q+37y+14w']));
+
+// console.log(solve(['42t-21x+11q-586-10w+74z+11u-60t-74r-8t-2s+66y+26p-52v=-61s-11r+11s+202-z',
+// 	'62v-27t+26s+47y+40x+38y-2y-31q+56q-17w-80z-47u+64p+27t+79r+1125=33y-21u+37s',
+// 	'-15r+87u-74v-6459-20y-82z+46q+33p+31p-5r+57w+11t-68s-73x=38t+12q',
+// 	'12r+26p+55r+73v+9q+5s+81z+17505+6t-41u-40w+67y-19p-91x=15q-31s+32t-35u-10t',
+// 	'70u-44x-18u-7u+20169-14w+104v+53p-25z+24q+21y-88w+46x+65r-12s=-6w-16y+10v',
+// 	'-56p+105u+15t+31v+57z-54x-21q+36x-5r+31w+37r-8u+64q+18w+52s+6378-108t-2y=-21t-2157',
+// 	'-31x+52y-10r+6z-86q+70u-51x+14s-p+28943+83v-6t-89w=-2y-48r-15s',
+// 	'37v-72p+25u-12370-58z-14s+66w-61r-4171+105t+28q+56y-18v-25t+62q+27x-96x-42v=']));
+
 // Solvable
-console.log(solve(['-42s-z-28u-932-66r-54q+21q+32v-39z-2635+92t-29w-52y+16p+33p+35w+29p+51x+35z-28u-25q=32q-28y+11z-23s',
-	'-1640+13y-62v-4851+17x-9s+30u-17t+13q+36w-104z-11r+15p=-65u-56t-22z-2w-21v',
-	'14u+18x-17484-31p+78u+17z+39y-80q+33w+12v-78t-5841-67p+71z+54r-78s=-4x+5x-59y',
-	'34u+22v-50z+6z-18u-5852+32x-68q+37t-40q+5p-45w+93s-48r-22x=-30v-21t+10s+2v-38q-39q',
-	'-38r+16p-51v+3447+36s-50y+36p+14x+90w-72s-7x-77u+10385+14p-80z-60t+43q=-2u+39q+4x',
-	'28q-90t-27v-71y-30x-32r-13z-2779-23v-74w+20p-53q-12s+58u=-40r-50x+958+26z',
-	'-10z+73v+19z-2t-17y-64y+99w+38r+8203+26x-69u-47p+73s+45q=30s-37x-2735',
-	'29v+48u+2742-70z+44p-3s+5w+29v+1399-66t+39y+1376-24y-25q-97x+53r+10z+57s=14p-v-35w+26q',
-	'30t-94s-93v+52w-38z-8w+27q+51y+19p+28r-9t+1591-u-15x=45r-13w+5y-536-33s-26y',
-	'10z+40y-19v-118s-62x-83r-58w+32p+23s-68q+10p-14t-38z+2u+31t-10856=-16q+46y+3632+5z+13p+42p-27v',
-	'-40y+20y-73z-27r-8s+26w-28u-84p+54t-90v-3q-535+46x-1417=41w-26s+35t+46x']));
+// console.log(solve(['-42s-z-28u-932-66r-54q+21q+32v-39z-2635+92t-29w-52y+16p+33p+35w+29p+51x+35z-28u-25q=32q-28y+11z-23s',
+// 	'-1640+13y-62v-4851+17x-9s+30u-17t+13q+36w-104z-11r+15p=-65u-56t-22z-2w-21v',
+// 	'14u+18x-17484-31p+78u+17z+39y-80q+33w+12v-78t-5841-67p+71z+54r-78s=-4x+5x-59y',
+// 	'34u+22v-50z+6z-18u-5852+32x-68q+37t-40q+5p-45w+93s-48r-22x=-30v-21t+10s+2v-38q-39q',
+// 	'-38r+16p-51v+3447+36s-50y+36p+14x+90w-72s-7x-77u+10385+14p-80z-60t+43q=-2u+39q+4x',
+// 	'28q-90t-27v-71y-30x-32r-13z-2779-23v-74w+20p-53q-12s+58u=-40r-50x+958+26z',
+// 	'-10z+73v+19z-2t-17y-64y+99w+38r+8203+26x-69u-47p+73s+45q=30s-37x-2735',
+// 	'29v+48u+2742-70z+44p-3s+5w+29v+1399-66t+39y+1376-24y-25q-97x+53r+10z+57s=14p-v-35w+26q',
+// 	'30t-94s-93v+52w-38z-8w+27q+51y+19p+28r-9t+1591-u-15x=45r-13w+5y-536-33s-26y',
+// 	'10z+40y-19v-118s-62x-83r-58w+32p+23s-68q+10p-14t-38z+2u+31t-10856=-16q+46y+3632+5z+13p+42p-27v',
+// 	'-40y+20y-73z-27r-8s+26w-28u-84p+54t-90v-3q-535+46x-1417=41w-26s+35t+46x']));
+
+console.log(solve(['-36t+27w+9s+8w+28w+67x-5y-39q+3631-24q-22t-26p-25u+78z-69v-17r=32r-53s+15y',
+	'52p+33q+71t+16811+59w+72x+s+71r+16v+3x-82y+38u-24z-8y+7w=44v+2y-40q+34s',
+	'7x-10775+5u+9q-40z+27u+81p-86t-50w-38r-7v+39y-2q+40z-62s-45r=-39x+23p-43y-40q',
+	'31x-17u-88v+1935-27p+100w+87q+25t-67y-29z+59s+69t-33r-68z=-29v+12y-626+45u',
+	'40q+54p+21x-22y+71w-24u-30v+13t-10t-49y-45r-42u+27z-103x+4539-50s+2266+2291=-56v-26x',
+	'19x+10v+13v+53y-84x-79w-20q+99p+23t-3r+13u+62s+z+93q-17p+36y-15213=-4y-5s-9p-54v+5095-72t',
+	'-25p-81u-5w+17z-29v-28t-83y-11w+44p+24x+78v-2697-28r-26w-100q+41s+7s=1z-37u-27q+7x',
+	'-75t+62u-35x+62r-45q+u+72w-11p+103x-36q-33x-2q+45z+7y+42t+10417+5287-59s-39p=11z+53x-5274+52x+25u+35z-5t+s',
+	'105s-59w+24p+58q+27v+82y+16x+4t-33w+49t-46r-15807+35u-32q+34z=-52z-4x-25u+33q+18s-31w',
+	'-13z-56v+5r+88s+14y-40q-70w+75u+29t-64x+6097+95p=-10r-46t+19u+24v+23r+28s+22x',
+	'9x+22q+24z+55v-10989-3y-3r-86t-19w-32p-71z-49p-8u+51s+21t-2v=-30q-6z-45x-6u-3z-16w+3r']));
 
 // Zero as solution
-console.log(solve(['-98q+17u+81w-59s-76u-3p-11z+18t-41x-w-82y+68v+46t-83z-4691-r=2355+2326',
-	'-x+44u-69s+p-51v-43q-85r+71t-32y-1413+6z-33p+67w=56y-17q-18p+60p',
-	'-17q+17y-37z-43r+15p+47r-100v+3220+6318+15t+15v-55r-19w+50s-24s-55t+14q-75u=-68t-64x-3168-66p-51t',
-	'-3t+23v+12v+75p-72q-69x-44r+24r-36u+38x+8v+15s+3509+28y+30s+10413-55w-52z=-12t-35s-48t-12p',
-	'18w-7346+65r+26t+z+64x-10v-36q-14p-22u+9s+56y+22u+59q-22t=8s+17p-11z-11p-31w',
-	'4505-46w-78s-51v+11z-6x-10r+94p-72u+46q-20u+6x+48w-24t+44r+3y+21z=-27y+43r-33w+y+17r',
-	'9v+6050-45z+21y-47v+32y+81p+25r+10v+3086+54t-5q+3050+62s+41u-35w+35z+28x=-15z-14r',
-	'-59u-97r+r+29q-2t-53z-28x-21p+52p-35q-16y+4395+2y-60v+31x-20s+37w-11u=-6u-1489',
-	'13u+37p+6840-41w-50t+86z+4x-23w-17v-50u-19q+16y-56r+56s+62x-27r=44t+30s+17y+8p-32q',
-	'-93r+70w+106q-67z+78p+33x-11p+44u-67t-9y-7v-15s+22t+26r-8x+21z-6564=9q-3x-61s-64v',
-	'-35u-80q-32r+15w-90t+71p-85z-204-63u-72y-112v+29x-556+67s=-26v+2x-27w+17x-26x']));
+// console.log(solve(['-98q+17u+81w-59s-76u-3p-11z+18t-41x-w-82y+68v+46t-83z-4691-r=2355+2326',
+// 	'-x+44u-69s+p-51v-43q-85r+71t-32y-1413+6z-33p+67w=56y-17q-18p+60p',
+// 	'-17q+17y-37z-43r+15p+47r-100v+3220+6318+15t+15v-55r-19w+50s-24s-55t+14q-75u=-68t-64x-3168-66p-51t',
+// 	'-3t+23v+12v+75p-72q-69x-44r+24r-36u+38x+8v+15s+3509+28y+30s+10413-55w-52z=-12t-35s-48t-12p',
+// 	'18w-7346+65r+26t+z+64x-10v-36q-14p-22u+9s+56y+22u+59q-22t=8s+17p-11z-11p-31w',
+// 	'4505-46w-78s-51v+11z-6x-10r+94p-72u+46q-20u+6x+48w-24t+44r+3y+21z=-27y+43r-33w+y+17r',
+// 	'9v+6050-45z+21y-47v+32y+81p+25r+10v+3086+54t-5q+3050+62s+41u-35w+35z+28x=-15z-14r',
+// 	'-59u-97r+r+29q-2t-53z-28x-21p+52p-35q-16y+4395+2y-60v+31x-20s+37w-11u=-6u-1489',
+// 	'13u+37p+6840-41w-50t+86z+4x-23w-17v-50u-19q+16y-56r+56s+62x-27r=44t+30s+17y+8p-32q',
+// 	'-93r+70w+106q-67z+78p+33x-11p+44u-67t-9y-7v-15s+22t+26r-8x+21z-6564=9q-3x-61s-64v',
+// 	'-35u-80q-32r+15w-90t+71p-85z-204-63u-72y-112v+29x-556+67s=-26v+2x-27w+17x-26x']));
 
 // Not enough equations
 // console.log(solve(['-14s-34v+90u+38x-58y-54w+67q+5w-37s+47t+11r-10z-45z+17p-8545=6z-36v+2798+24t+15s',

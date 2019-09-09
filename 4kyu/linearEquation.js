@@ -3,6 +3,7 @@ const getLCM = (x, y) => Math.abs(x) / getGCD(x, y) * Math.abs(y);
 
 function reduceFraction(numerator, denominator) {
 	let gcd = getGCD(Math.abs(numerator), Math.abs(denominator));
+	if (Object.is(numerator, -0)) numerator *= -1;
 	return numerator % denominator === 0 ? numerator / denominator : `${(numerator / gcd).toString()}/${(denominator / gcd).toString()}`;
 }
 
@@ -12,34 +13,39 @@ function splitFraction(number) {
 	return [numerator, denominator];
 }
 
-function addIntOrFraction(number1, number2) {
-	let [numerator1, denominator1] = splitFraction(number1);
-	let [numerator2, denominator2] = splitFraction(number2);
+function addIntOrFraction([numerator1, denominator1], [numerator2, denominator2]) {
 	let commonDenominator = getLCM(denominator1, denominator2);
 	return reduceFraction(commonDenominator / denominator1 * numerator1 + commonDenominator / denominator2 * numerator2, commonDenominator);
 }
 
-function subtractIntOrFraction(number1, number2) {
-	let [numerator1, denominator1] = splitFraction(number1);
-	let [numerator2, denominator2] = splitFraction(number2);
+function subtractIntOrFraction([numerator1, denominator1], [numerator2, denominator2]) {
 	let commonDenominator = getLCM(denominator1, denominator2);
 	return reduceFraction(commonDenominator / denominator1 * numerator1 - commonDenominator / denominator2 * numerator2, commonDenominator);
 }
 
-function multiplyIntOrFraction(number1, number2) {
-	let [numerator1, denominator1] = splitFraction(number1);
-	let [numerator2, denominator2] = splitFraction(number2);
+function multiplyIntOrFraction([numerator1, denominator1], [numerator2, denominator2]) {
+	if (numerator1 * numerator2 > Number.MAX_SAFE_INTEGER || denominator1 * denominator2 > Number.MAX_SAFE_INTEGER) {
+		console.log("Warn!");
+	}
 	return reduceFraction(numerator1 * numerator2, denominator1 * denominator2);
 }
 
-function divideIntOrFraction(number1, number2) {
-	let [numerator1, denominator1] = splitFraction(number1);
-	let [numerator2, denominator2] = splitFraction(number2);
+function divideIntOrFraction([numerator1, denominator1], [numerator2, denominator2]) {
 	if (Math.sign(numerator2) === -1) {
 		numerator1 *= -1;
 		numerator2 *= -1;
 	}
 	return reduceFraction(numerator1 * denominator2, denominator1 * numerator2);
+}
+
+function isValidCoeffMatrix(coeffMatrix) {
+	let numOnly = coeffMatrix.slice(1);
+	for (let i = 0; i < Math.min(numOnly[0].length, numOnly.length); i++) {
+		if (numOnly[i][i] === 0) {
+			return false;
+		}
+	}
+	return true;
 }
 
 function mapifySingleSide(eqSide) {
@@ -117,14 +123,60 @@ function prepareEqMatrix(eqSystem) {
 		.map(s => s.split("/"))
 		.map(ar => ar.map(e => parseInt(e)));
 	let prettyEqMatrix = unknownRow.concat(uniqCoeffs);
-	// ✘ pivot positions: prefer 1's
-	// ✘ pivot positions: avoid zeroes
+	// console.log("ez a nullátlanítás előtti állapot \n", prettyEqMatrix);
+	// ✔ pivot positions: avoid zeroes
+	for (let i = 0; i < Math.min(prettyEqMatrix.length - 1, prettyEqMatrix[0].length - 1); i++) {
+		let restOfTheCol = prettyEqMatrix[0].map((col, i) => prettyEqMatrix.map(row => row[i]))[i].slice(i + 2);
+		let bestCandidate = i + 1;
+		//console.log("sor száma", i + 1, "kérdéses sor", prettyEqMatrix[i + 1]);
+		// ✘ pivot positions: prefer 1's
+//		if (prettyEqMatrix[i + 1][i] !== 1 && restOfTheCol.indexOf(1) !== -1) {
+//			bestCandidate = restOfTheCol.indexOf(1);
+//			console.log("új legjobb jelölt (1)", bestCandidate, prettyEqMatrix[bestCandidate]);
+//		}
+		if (prettyEqMatrix[i + 1][i] === 0) {
+			bestCandidate = restOfTheCol.findIndex(e => e !== 0) + 2;
+			//console.log("új legjobb jelölt (non-0)", bestCandidate, prettyEqMatrix[bestCandidate]);
+		}
+		[prettyEqMatrix[i + 1], prettyEqMatrix[bestCandidate]] = [prettyEqMatrix[bestCandidate], prettyEqMatrix[i + 1]];
+	}
+	//console.log("ezt adjuk vissza a végén \n", prettyEqMatrix);
 	return prettyEqMatrix;
 }
 
 function solve(equations) {
 	let eliminationMatrix = prepareEqMatrix(createEqMatrix(equations));
-	return eliminationMatrix;
+	if (eliminationMatrix[0].length > eliminationMatrix.length) {
+		return null; // Not enough unique equations for the number of unknowns
+	}
+	let unknowns = eliminationMatrix.shift();
+	//console.log(eliminationMatrix);
+	for (let curRow = 0; curRow < Math.min(eliminationMatrix[0].length - 1, eliminationMatrix.length); curRow++) {
+		let rowFactor = divideIntOrFraction(splitFraction(1), splitFraction(eliminationMatrix[curRow][curRow]));
+		// Multiply all row items with a constant so that pivot element becomes 1
+		eliminationMatrix[curRow].forEach((ent, idx, arr) => arr[idx] = multiplyIntOrFraction(splitFraction(arr[idx]), splitFraction(rowFactor)));
+		// Add the current row multiplied by a constant to all below rows to get 0s underneath the pivot element
+		for (let nextRows = curRow + 1; nextRows < eliminationMatrix.length; nextRows++) {
+			rowFactor = multiplyIntOrFraction(splitFraction(eliminationMatrix[nextRows][curRow]), splitFraction(-1));
+			eliminationMatrix[nextRows].forEach((ent, idx, arr) => arr[idx] = addIntOrFraction(splitFraction(multiplyIntOrFraction(splitFraction(eliminationMatrix[curRow][idx]), splitFraction(rowFactor))), splitFraction(arr[idx])));
+		}
+		// ...and above too
+		for (let prevRows = curRow - 1; prevRows > -1; prevRows--) {
+			rowFactor = multiplyIntOrFraction(splitFraction(eliminationMatrix[prevRows][curRow]), splitFraction(-1));
+			eliminationMatrix[prevRows].forEach((ent, idx, arr) => arr[idx] = addIntOrFraction(splitFraction(multiplyIntOrFraction(splitFraction(eliminationMatrix[curRow][idx]), splitFraction(rowFactor))), splitFraction(arr[idx])));
+		}
+	}
+	if (eliminationMatrix[0].length < eliminationMatrix.length) {
+		// ha van lejjebb bárhol nemnull, akkor return null
+	}
+	let resultMap = new Map();
+	for (let i = 0; i < unknowns.length - 1; i++) {
+		let [resNum, resDnm] = splitFraction(eliminationMatrix[i][eliminationMatrix[0].length - 1]);
+		let result = Math.round((resNum / resDnm * 10000000) / 10000000);
+		if (Math.abs(result) > 1000000) result = 0;
+		resultMap.set(unknowns[i], result)
+	}
+	return resultMap;
 }
 
 module.exports = {
@@ -136,11 +188,11 @@ module.exports = {
 	addIntOrFraction,
 	subtractIntOrFraction,
 	multiplyIntOrFraction,
-	divideIntOrFraction
+	divideIntOrFraction,
+	splitFraction,
+	isValidCoeffMatrix
 }
 
-// console.log(solve(["x+y=1", "2x+2y=2", "x-3y=-3"]));
-console.log(solve(["-y=-4z", "-x+4=8z-1", "6y-10x-2=0", "3x+2y-4z=5"]));
 // console.log(solve(["2x=4"]));
 // console.log(solve(["2x+8y=4", "-x+4y=14"]));
 // console.log(solve(["x=4y", "2x=8y", "x+y=5"]));
@@ -153,35 +205,35 @@ console.log(solve(["-y=-4z", "-x+4=8z-1", "6y-10x-2=0", "3x+2y-4z=5"]));
 // console.log(solve(["x+y=1", "2x+2y=2"]));
 
 // Solvable
-// console.log(solve(['-42s-z-28u-932-66r-54q+21q+32v-39z-2635+92t-29w-52y+16p+33p+35w+29p+51x+35z-28u-25q=32q-28y+11z-23s',
-// 	'-1640+13y-62v-4851+17x-9s+30u-17t+13q+36w-104z-11r+15p=-65u-56t-22z-2w-21v',
-// 	'14u+18x-17484-31p+78u+17z+39y-80q+33w+12v-78t-5841-67p+71z+54r-78s=-4x+5x-59y',
-// 	'34u+22v-50z+6z-18u-5852+32x-68q+37t-40q+5p-45w+93s-48r-22x=-30v-21t+10s+2v-38q-39q',
-// 	'-38r+16p-51v+3447+36s-50y+36p+14x+90w-72s-7x-77u+10385+14p-80z-60t+43q=-2u+39q+4x',
-// 	'28q-90t-27v-71y-30x-32r-13z-2779-23v-74w+20p-53q-12s+58u=-40r-50x+958+26z',
-// 	'-10z+73v+19z-2t-17y-64y+99w+38r+8203+26x-69u-47p+73s+45q=30s-37x-2735',
-// 	'29v+48u+2742-70z+44p-3s+5w+29v+1399-66t+39y+1376-24y-25q-97x+53r+10z+57s=14p-v-35w+26q',
-// 	'30t-94s-93v+52w-38z-8w+27q+51y+19p+28r-9t+1591-u-15x=45r-13w+5y-536-33s-26y',
-// 	'10z+40y-19v-118s-62x-83r-58w+32p+23s-68q+10p-14t-38z+2u+31t-10856=-16q+46y+3632+5z+13p+42p-27v',
-// 	'-40y+20y-73z-27r-8s+26w-28u-84p+54t-90v-3q-535+46x-1417=41w-26s+35t+46x']));
+console.log(solve(['-42s-z-28u-932-66r-54q+21q+32v-39z-2635+92t-29w-52y+16p+33p+35w+29p+51x+35z-28u-25q=32q-28y+11z-23s',
+	'-1640+13y-62v-4851+17x-9s+30u-17t+13q+36w-104z-11r+15p=-65u-56t-22z-2w-21v',
+	'14u+18x-17484-31p+78u+17z+39y-80q+33w+12v-78t-5841-67p+71z+54r-78s=-4x+5x-59y',
+	'34u+22v-50z+6z-18u-5852+32x-68q+37t-40q+5p-45w+93s-48r-22x=-30v-21t+10s+2v-38q-39q',
+	'-38r+16p-51v+3447+36s-50y+36p+14x+90w-72s-7x-77u+10385+14p-80z-60t+43q=-2u+39q+4x',
+	'28q-90t-27v-71y-30x-32r-13z-2779-23v-74w+20p-53q-12s+58u=-40r-50x+958+26z',
+	'-10z+73v+19z-2t-17y-64y+99w+38r+8203+26x-69u-47p+73s+45q=30s-37x-2735',
+	'29v+48u+2742-70z+44p-3s+5w+29v+1399-66t+39y+1376-24y-25q-97x+53r+10z+57s=14p-v-35w+26q',
+	'30t-94s-93v+52w-38z-8w+27q+51y+19p+28r-9t+1591-u-15x=45r-13w+5y-536-33s-26y',
+	'10z+40y-19v-118s-62x-83r-58w+32p+23s-68q+10p-14t-38z+2u+31t-10856=-16q+46y+3632+5z+13p+42p-27v',
+	'-40y+20y-73z-27r-8s+26w-28u-84p+54t-90v-3q-535+46x-1417=41w-26s+35t+46x']));
 
 // Zero as solution
-// console.log(solve(['-98q+17u+81w-59s-76u-3p-11z+18t-41x-w-82y+68v+46t-83z-4691-r=2355+2326',
-// 	'-x+44u-69s+p-51v-43q-85r+71t-32y-1413+6z-33p+67w=56y-17q-18p+60p',
-// 	'-17q+17y-37z-43r+15p+47r-100v+3220+6318+15t+15v-55r-19w+50s-24s-55t+14q-75u=-68t-64x-3168-66p-51t',
-// 	'-3t+23v+12v+75p-72q-69x-44r+24r-36u+38x+8v+15s+3509+28y+30s+10413-55w-52z=-12t-35s-48t-12p',
-// 	'18w-7346+65r+26t+z+64x-10v-36q-14p-22u+9s+56y+22u+59q-22t=8s+17p-11z-11p-31w',
-// 	'4505-46w-78s-51v+11z-6x-10r+94p-72u+46q-20u+6x+48w-24t+44r+3y+21z=-27y+43r-33w+y+17r',
-// 	'9v+6050-45z+21y-47v+32y+81p+25r+10v+3086+54t-5q+3050+62s+41u-35w+35z+28x=-15z-14r',
-// 	'-59u-97r+r+29q-2t-53z-28x-21p+52p-35q-16y+4395+2y-60v+31x-20s+37w-11u=-6u-1489',
-// 	'13u+37p+6840-41w-50t+86z+4x-23w-17v-50u-19q+16y-56r+56s+62x-27r=44t+30s+17y+8p-32q',
-// 	'-93r+70w+106q-67z+78p+33x-11p+44u-67t-9y-7v-15s+22t+26r-8x+21z-6564=9q-3x-61s-64v',
-// 	'-35u-80q-32r+15w-90t+71p-85z-204-63u-72y-112v+29x-556+67s=-26v+2x-27w+17x-26x']));
+console.log(solve(['-98q+17u+81w-59s-76u-3p-11z+18t-41x-w-82y+68v+46t-83z-4691-r=2355+2326',
+	'-x+44u-69s+p-51v-43q-85r+71t-32y-1413+6z-33p+67w=56y-17q-18p+60p',
+	'-17q+17y-37z-43r+15p+47r-100v+3220+6318+15t+15v-55r-19w+50s-24s-55t+14q-75u=-68t-64x-3168-66p-51t',
+	'-3t+23v+12v+75p-72q-69x-44r+24r-36u+38x+8v+15s+3509+28y+30s+10413-55w-52z=-12t-35s-48t-12p',
+	'18w-7346+65r+26t+z+64x-10v-36q-14p-22u+9s+56y+22u+59q-22t=8s+17p-11z-11p-31w',
+	'4505-46w-78s-51v+11z-6x-10r+94p-72u+46q-20u+6x+48w-24t+44r+3y+21z=-27y+43r-33w+y+17r',
+	'9v+6050-45z+21y-47v+32y+81p+25r+10v+3086+54t-5q+3050+62s+41u-35w+35z+28x=-15z-14r',
+	'-59u-97r+r+29q-2t-53z-28x-21p+52p-35q-16y+4395+2y-60v+31x-20s+37w-11u=-6u-1489',
+	'13u+37p+6840-41w-50t+86z+4x-23w-17v-50u-19q+16y-56r+56s+62x-27r=44t+30s+17y+8p-32q',
+	'-93r+70w+106q-67z+78p+33x-11p+44u-67t-9y-7v-15s+22t+26r-8x+21z-6564=9q-3x-61s-64v',
+	'-35u-80q-32r+15w-90t+71p-85z-204-63u-72y-112v+29x-556+67s=-26v+2x-27w+17x-26x']));
 
 // Not enough equations
 // console.log(solve(['-14s-34v+90u+38x-58y-54w+67q+5w-37s+47t+11r-10z-45z+17p-8545=6z-36v+2798+24t+15s',
 // 	'41y+53q-18z+39x+16w-1887+11y-6v-39y+21s-17t-43u+3v+31p-51u-28r=-s-4x-30w+49p-11t',
-// 	'-39q-46y+59s+75t+24w+21y-33s+60v+76x+4146+29u+55w+90p+87r+58z=11t+10s+30u',
+// 	'-39q-46y+59s+75t+24w+21y-33s+60v+76x+4146+29u+55w+90p+87r+58z=11t+10s+30u',z
 // 	'-65w-4z+19p-63v+68t-20y-57p-3142+34x+14y-90q+95s-76z+69u-1573-20s+20s-5r+9u=1619-17r-17t+7x',
 // 	'74w+64p-8608+17z-7y-84r+41t+13v-6z+98q-22y+35u-13w-56x-64v-51s=-36r',
 // 	'51v-59p+11z-44v+91q+54y-60w-12q+69x-73s+5375+34r+25y-98u+11t=-33r-2682-17w-2700',

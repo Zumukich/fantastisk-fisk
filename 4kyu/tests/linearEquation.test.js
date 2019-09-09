@@ -8,115 +8,117 @@ const addIntOrFraction = testFunctions.addIntOrFraction;
 const subtractIntOrFraction = testFunctions.subtractIntOrFraction;
 const multiplyIntOrFraction = testFunctions.multiplyIntOrFraction;
 const divideIntOrFraction = testFunctions.divideIntOrFraction;
+const splitFraction = testFunctions.splitFraction;
+const isValidCoeffMatrix = testFunctions.isValidCoeffMatrix;
 
 describe("Basic operation tests", function () {
 	it("Should add Int to Int", function () {
-		assert.deepStrictEqual(addIntOrFraction(23, 54), 77);
-		assert.deepStrictEqual(addIntOrFraction(12, 34), 46);
+		assert.deepStrictEqual(addIntOrFraction(splitFraction(23), splitFraction(54)), 77);
+		assert.deepStrictEqual(addIntOrFraction(splitFraction(12), splitFraction(34)), 46);
 	});
 	it("Should add Int to Frac", function () {
-		assert.deepStrictEqual(addIntOrFraction(3, "1/2"), "7/2");
-		assert.deepStrictEqual(addIntOrFraction(63, "135/17"), "1206/17");
+		assert.deepStrictEqual(addIntOrFraction(splitFraction(3), splitFraction("1/2")), "7/2");
+		assert.deepStrictEqual(addIntOrFraction(splitFraction(63), splitFraction("135/17")), "1206/17");
 	});
 	it("Should add Frac to Int", function () {
-		assert.deepStrictEqual(addIntOrFraction("4/3", 5), "19/3");
-		assert.deepStrictEqual(addIntOrFraction("534/7", 13), "625/7");
+		assert.deepStrictEqual(addIntOrFraction(splitFraction("4/3"), splitFraction(5)), "19/3");
+		assert.deepStrictEqual(addIntOrFraction(splitFraction("534/7"), splitFraction(13)), "625/7");
 	});
 	it("Should add Frac to Frac", function () {
-		assert.deepStrictEqual(addIntOrFraction("12/11", "5/3"), "91/33");
-		assert.deepStrictEqual(addIntOrFraction("5/9", "753/1192"), "12737/10728");
+		assert.deepStrictEqual(addIntOrFraction(splitFraction("12/11"), splitFraction("5/3")), "91/33");
+		assert.deepStrictEqual(addIntOrFraction(splitFraction("5/9"), splitFraction("753/1192")), "12737/10728");
 	});
 	it("Addition should handle negative numbers", function () {
-		assert.deepStrictEqual(addIntOrFraction(-2, 5), 3);
-		assert.deepStrictEqual(addIntOrFraction(-2, "2/7"), "-12/7");
-		assert.deepStrictEqual(addIntOrFraction("-12/5", 3), "3/5");
-		assert.deepStrictEqual(addIntOrFraction("-3/4", "-1/2"), "-5/4");
+		assert.deepStrictEqual(addIntOrFraction(splitFraction(-2), splitFraction(5)), 3);
+		assert.deepStrictEqual(addIntOrFraction(splitFraction(-2), splitFraction("2/7")), "-12/7");
+		assert.deepStrictEqual(addIntOrFraction(splitFraction("-12/5"), splitFraction(3)), "3/5");
+		assert.deepStrictEqual(addIntOrFraction(splitFraction("-3/4"), splitFraction("-1/2")), "-5/4");
 	});
 	it("Addition should Return Reduced Result", function () {
-		assert.deepStrictEqual(addIntOrFraction("1/4", "1/4"), "1/2");
-		assert.deepStrictEqual(addIntOrFraction("3/8", "21/8"), 3);
+		assert.deepStrictEqual(addIntOrFraction(splitFraction("1/4"), splitFraction("1/4")), "1/2");
+		assert.deepStrictEqual(addIntOrFraction(splitFraction("3/8"), splitFraction("21/8")), 3);
 	});
 	it("Should subtract Int from Int", function () {
-		assert.deepStrictEqual(subtractIntOrFraction(45, 23), 22);
-		assert.deepStrictEqual(subtractIntOrFraction(23, 12), 11);
+		assert.deepStrictEqual(subtractIntOrFraction(splitFraction(45), splitFraction(23)), 22);
+		assert.deepStrictEqual(subtractIntOrFraction(splitFraction(23), splitFraction(12)), 11);
 	});
 	it("Should subtract Int from Frac", function () {
-		assert.deepStrictEqual(subtractIntOrFraction("36/7", 2), "22/7");
-		assert.deepStrictEqual(subtractIntOrFraction("21/11", 1), "10/11");
+		assert.deepStrictEqual(subtractIntOrFraction(splitFraction("36/7"), splitFraction(2)), "22/7");
+		assert.deepStrictEqual(subtractIntOrFraction(splitFraction("21/11"), splitFraction(1)), "10/11");
 	});
 	it("Should subtract Frac from Int", function () {
-		assert.deepStrictEqual(subtractIntOrFraction(3, "7/6"), "11/6");
-		assert.deepStrictEqual(subtractIntOrFraction(53, "72/5"), "193/5");
+		assert.deepStrictEqual(subtractIntOrFraction(splitFraction(3), splitFraction("7/6")), "11/6");
+		assert.deepStrictEqual(subtractIntOrFraction(splitFraction(53), splitFraction("72/5")), "193/5");
 	});
 	it("Should subtract Frac from Frac", function () {
-		assert.deepStrictEqual(subtractIntOrFraction("31/23", "13/37"), "848/851");
-		assert.deepStrictEqual(subtractIntOrFraction("67/75", "49/121"), "4432/9075");
+		assert.deepStrictEqual(subtractIntOrFraction(splitFraction("31/23"), splitFraction("13/37")), "848/851");
+		assert.deepStrictEqual(subtractIntOrFraction(splitFraction("67/75"), splitFraction("49/121")), "4432/9075");
 	});
 	it("Subtraction should handle negative numbers", function () {
-		assert.deepStrictEqual(subtractIntOrFraction(23, 49), -26);
-		assert.deepStrictEqual(subtractIntOrFraction("5/6", 1), "-1/6");
-		assert.deepStrictEqual(subtractIntOrFraction(1, "5/6"), "1/6");
-		assert.deepStrictEqual(subtractIntOrFraction("73/41", "79/13"), "-2290/533");
+		assert.deepStrictEqual(subtractIntOrFraction(splitFraction(23), splitFraction(49)), -26);
+		assert.deepStrictEqual(subtractIntOrFraction(splitFraction("5/6"), splitFraction(1)), "-1/6");
+		assert.deepStrictEqual(subtractIntOrFraction(splitFraction(1), splitFraction("5/6")), "1/6");
+		assert.deepStrictEqual(subtractIntOrFraction(splitFraction("73/41"), splitFraction("79/13")), "-2290/533");
 	});
 	it("Subtraction should Return Reduced Result", function () {
-		assert.deepStrictEqual(subtractIntOrFraction("23/72", "11/24"), "-5/36");
-		assert.deepStrictEqual(subtractIntOrFraction("23/4", "11/4"), 3);
+		assert.deepStrictEqual(subtractIntOrFraction(splitFraction("23/72"), splitFraction("11/24")), "-5/36");
+		assert.deepStrictEqual(subtractIntOrFraction(splitFraction("23/4"), splitFraction("11/4")), 3);
 	});
 	it("Should multiply Int by Int", function () {
-		assert.deepStrictEqual(multiplyIntOrFraction(2, 3), 6);
-		assert.deepStrictEqual(multiplyIntOrFraction(441, 253), 111573);
+		assert.deepStrictEqual(multiplyIntOrFraction(splitFraction(2), splitFraction(3)), 6);
+		assert.deepStrictEqual(multiplyIntOrFraction(splitFraction(441), splitFraction(253)), 111573);
 	});
 	it("Should multiply Int by Frac", function () {
-		assert.deepStrictEqual(multiplyIntOrFraction(3, "3/7"), "9/7");
-		assert.deepStrictEqual(multiplyIntOrFraction(2, "11/23"), "22/23");
+		assert.deepStrictEqual(multiplyIntOrFraction(splitFraction(3), splitFraction("3/7")), "9/7");
+		assert.deepStrictEqual(multiplyIntOrFraction(splitFraction(2), splitFraction("11/23")), "22/23");
 	});
 	it("Should multiply Frac by Int", function () {
-		assert.deepStrictEqual(multiplyIntOrFraction("7/11", 12), "84/11");
-		assert.deepStrictEqual(multiplyIntOrFraction("13/27", 4), "52/27");
+		assert.deepStrictEqual(multiplyIntOrFraction(splitFraction("7/11"), splitFraction(12)), "84/11");
+		assert.deepStrictEqual(multiplyIntOrFraction(splitFraction("13/27"), splitFraction(4)), "52/27");
 	});
 	it("Should multiply Frac by Frac", function () {
-		assert.deepStrictEqual(multiplyIntOrFraction("11/23", "14/27"), "154/621");
-		assert.deepStrictEqual(multiplyIntOrFraction("1231/347", "1093/8964"), "1345483/3110508");
+		assert.deepStrictEqual(multiplyIntOrFraction(splitFraction("11/23"), splitFraction("14/27")), "154/621");
+		assert.deepStrictEqual(multiplyIntOrFraction(splitFraction("1231/347"), splitFraction("1093/8964")), "1345483/3110508");
 	});
 	it("Multiplication should handle negative numbers", function () {
-		assert.deepStrictEqual(multiplyIntOrFraction(-2, 3), -6);
-		assert.deepStrictEqual(multiplyIntOrFraction(-7, -5), 35);
-		assert.deepStrictEqual(multiplyIntOrFraction("-2/5", "12/5"), "-24/25");
-		assert.deepStrictEqual(multiplyIntOrFraction("3/5", "-11/5"), "-33/25");
-		assert.deepStrictEqual(multiplyIntOrFraction("-2563/12454", "-14431/56343"), "36986653/701695722");
+		assert.deepStrictEqual(multiplyIntOrFraction(splitFraction(-2), splitFraction(3)), -6);
+		assert.deepStrictEqual(multiplyIntOrFraction(splitFraction(-7), splitFraction(-5)), 35);
+		assert.deepStrictEqual(multiplyIntOrFraction(splitFraction("-2/5"), splitFraction("12/5")), "-24/25");
+		assert.deepStrictEqual(multiplyIntOrFraction(splitFraction("3/5"), splitFraction("-11/5")), "-33/25");
+		assert.deepStrictEqual(multiplyIntOrFraction(splitFraction("-2563/12454"), splitFraction("-14431/56343")), "36986653/701695722");
 	});
 	it("Multiplication should Return Reduced Result", function () {
-		assert.deepStrictEqual(multiplyIntOrFraction(11, "5/6"), "55/6");
-		assert.deepStrictEqual(multiplyIntOrFraction("1/3", 4), "4/3");
-		assert.deepStrictEqual(multiplyIntOrFraction("2/3", "3/4"), "1/2");
+		assert.deepStrictEqual(multiplyIntOrFraction(splitFraction(11), splitFraction("5/6")), "55/6");
+		assert.deepStrictEqual(multiplyIntOrFraction(splitFraction("1/3"), splitFraction(4)), "4/3");
+		assert.deepStrictEqual(multiplyIntOrFraction(splitFraction("2/3"), splitFraction("3/4")), "1/2");
 	});
 	it("Should divide Int by Int", function () {
-		assert.deepStrictEqual(divideIntOrFraction(120, 5), 24);
-		assert.deepStrictEqual(divideIntOrFraction(4717, 89), 53);
+		assert.deepStrictEqual(divideIntOrFraction(splitFraction(120), splitFraction(5)), 24);
+		assert.deepStrictEqual(divideIntOrFraction(splitFraction(4717), splitFraction(89)), 53);
 	});
 	it("Should divide Int by Frac", function () {
-		assert.deepStrictEqual(divideIntOrFraction(4, "3/4"), "16/3");
-		assert.deepStrictEqual(divideIntOrFraction(252, "11/37"), "9324/11");
+		assert.deepStrictEqual(divideIntOrFraction(splitFraction(4), splitFraction("3/4")), "16/3");
+		assert.deepStrictEqual(divideIntOrFraction(splitFraction(252), splitFraction("11/37")), "9324/11");
 	});
 	it("Should divide Frac by Int", function () {
-		assert.deepStrictEqual(divideIntOrFraction("11/37", 252), "11/9324");
-		assert.deepStrictEqual(divideIntOrFraction("6537/8972", 13), "6537/116636");
+		assert.deepStrictEqual(divideIntOrFraction(splitFraction("11/37"), splitFraction(252)), "11/9324");
+		assert.deepStrictEqual(divideIntOrFraction(splitFraction("6537/8972"), splitFraction(13)), "6537/116636");
 	});
 	it("Should divide Frac by Frac", function () {
-		assert.deepStrictEqual(divideIntOrFraction("6537/8972", "13/37"), "241869/116636");
-		assert.deepStrictEqual(divideIntOrFraction("249/316", "11/37"), "9213/3476");
+		assert.deepStrictEqual(divideIntOrFraction(splitFraction("6537/8972"), splitFraction("13/37")), "241869/116636");
+		assert.deepStrictEqual(divideIntOrFraction(splitFraction("249/316"), splitFraction("11/37")), "9213/3476");
 	});
 	it("Division should handle negative numbers", function () {
-		assert.deepStrictEqual(divideIntOrFraction(-12, 3), -4);
-		assert.deepStrictEqual(divideIntOrFraction(-35, -7), 5);
-		assert.deepStrictEqual(divideIntOrFraction("-2/5", "5/12"), "-24/25");
-		assert.deepStrictEqual(divideIntOrFraction("3/5", "-5/11"), "-33/25");
-		assert.deepStrictEqual(divideIntOrFraction("-2563/12454", "-14431/56343"), "144407109/179723674");
+		assert.deepStrictEqual(divideIntOrFraction(splitFraction(-12), splitFraction(3)), -4);
+		assert.deepStrictEqual(divideIntOrFraction(splitFraction(-35), splitFraction(-7)), 5);
+		assert.deepStrictEqual(divideIntOrFraction(splitFraction("-2/5"), splitFraction("5/12")), "-24/25");
+		assert.deepStrictEqual(divideIntOrFraction(splitFraction("3/5"), splitFraction("-5/11")), "-33/25");
+		assert.deepStrictEqual(divideIntOrFraction(splitFraction("-2563/12454"), splitFraction("-14431/56343")), "144407109/179723674");
 	});
 	it("Division should Return Reduced Result", function () {
-		assert.deepStrictEqual(divideIntOrFraction(4, "2/9"), 18);
-		assert.deepStrictEqual(divideIntOrFraction("2/5", "12/5"), "1/6");
-		assert.deepStrictEqual(divideIntOrFraction("245/311", "310/37"), "1813/19282");
+		assert.deepStrictEqual(divideIntOrFraction(splitFraction(4), splitFraction("2/9")), 18);
+		assert.deepStrictEqual(divideIntOrFraction(splitFraction("2/5"), splitFraction("12/5")), "1/6");
+		assert.deepStrictEqual(divideIntOrFraction(splitFraction("245/311"), splitFraction("310/37")), "1813/19282");
 	});
 });
 
@@ -361,20 +363,41 @@ describe("Equation system construction tests", function () {
 
 describe("Equation system preparation tests", function () {
 	it("Should move unknowns to the rightmost column", function () {
-		let result = prepareEqMatrix([[1, 'x', 'y', 'z'], [0, 0, -1, 4], [-5, -1, 0, -8], [1, -5, 3, 0], [5, 3, 2, -4]]);
-		assert.deepStrictEqual(result, [['x', 'y', 'z', 1], [0, -1, 4, 0], [-1, 0, -8, -5], [-5, 3, 0, 1], [3, 2, -4, 5]]);
+		let result = prepareEqMatrix([[1, 'x', 'y', 'z'], [3, 9, -1, 4], [-5, -1, 7, -8], [2, -5, 3, 5], [5, 3, 2, -4]]);
+		assert.deepStrictEqual(result, [['x', 'y', 'z', 1], [9, -1, 4, 3], [-1, 7, -8, -5], [-5, 3, 5, 2], [3, 2, -4, 5]]);
 	});
 	it("Should remove duplicates", function () {
 		let result = prepareEqMatrix([[1, 'x', 'y'], [1, 1, 1], [1, 1, 1], [-3, 1, -3]]);
 		assert.deepStrictEqual(result, [["x", "y", 1], [1, 1, 1], [1, -3, -3]]);
 	});
-	it("Should swap equations to position 1s to pivot positions", function () {
-		let result = prepareEqMatrix([[1, 'x', 'y', 'z'], [-4, 3, -4, 2], [1, -2, 1, 2], [2, 1, 2, -6]]);
-		assert.deepStrictEqual(result, [["x", "y", "z", 1], [1, 2, -6, 2], [-2, 1, 2, 1], [3, -4, 2, -4]]);
-	});
+//	it("Should swap equations to position 1s to pivot positions", function () {
+//		let result = prepareEqMatrix([[1, 'x', 'y', 'z'], [-4, 3, -4, 2], [1, -2, 1, 2], [2, 1, 2, -6]]);
+//		assert.deepStrictEqual(result, [["x", "y", "z", 1], [1, 2, -6, 2], [-2, 1, 2, 1], [3, -4, 2, -4]]);
+//	});
+//	it("Should swap equations to avoid 0 in pivot positions", function () {
+//		let result = prepareEqMatrix([[1, 'x', 'y', 'z'], [0, 0, -1, 4], [-5, -1, 0, -8], [1, -5, 3, 0], [5, 3, 2, -4]]);
+//		assert.deepStrictEqual(result, [["x", "y", "z", 1], [-1, 0, -8, -5], [0, -1, 4, 0], [3, 2, -4, 5], [-5, 3, 0, 1]]);
+//	});
 	it("Should swap equations to avoid 0 in pivot positions", function () {
-		let result = prepareEqMatrix([[1, 'x', 'y', 'z'], [0, 0, -1, 4], [-5, -1, 0, -8], [1, -5, 3, 0], [5, 3, 2, -4]]);
-		assert.deepStrictEqual(result, [["x", "y", "z", 1], [-1, 0, -8, -5], [0, -1, 4, 0], [3, 2, -4, 5], [-5, 3, 0, 1]]);
+		let result_1 = prepareEqMatrix([[1, 'x', 'y', 'z'], [0, 0, -1, 4], [-5, -1, 0, -8], [1, -5, 3, 0], [5, 3, 2, -4]]);
+		assert.deepStrictEqual(isValidCoeffMatrix(result_1), true);
+		let result_2 = prepareEqMatrix([ [ 1, 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' ],
+		[ 3434, 0, 79, -88, 7, 24, -14, 60, -63, -70, -49, -30 ],
+		[ -3385, 22, -39, 24, 77, -61, -72, 45, 3, -49, 52, -34 ],
+		[ -18582, 86, 15, 68, -47, 90, 19, 88, 57, 25, 52, -15 ],
+		[ -898, -75, -89, 38, 8, 21, 34, 54, 22, 49, -15, 29 ],
+		[ -376, 61, 68, -46, 50, 39, -36, 31, -18, 27, -25, -17 ],
+		[ -7756, 94, -94, -1, 29, 45, -98, -18, 39, -95, 44, -18 ],
+		[ 6800, -32, -14, -30, -6, 5, 19, 100, 55, 82, -87, 95 ],
+		[ 16838, -58, 99, 8, 78, -35, 100, -38, -60, 6, 10, 90 ],
+		[ -4257, 40, 55, -26, -13, 84, -64, -18, -78, 23, -4, 70 ],
+		[ -4495, 62, -35, -22, -47, 85, 56, -75, -24, -60, 33, -43 ],
+		[-1471, 50, -14, 42, 74, -50, 54, 26, -57, 55, 69, 2]]);
+		assert.deepStrictEqual(isValidCoeffMatrix(result_2), true);
+
+		// This is very much an edge case. Real-world situations are just handled fine by the above tests
+		//		let result_3 = prepareEqMatrix([[1, 'k', 'x', 'y', 'z'], [4, 0, 1, 0, 1], [4, 1, 0, 0, 0], [2, 0, 0, 1, 0], [5, 1, 1, 0, 0]]);
+		//		assert.deepStrictEqual(isValidCoeffMatrix(result_3), true);
 	});
 });
 

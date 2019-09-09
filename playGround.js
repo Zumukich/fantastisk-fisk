@@ -36,21 +36,13 @@ console.log(arr.reduce(gcd));
 
 console.log("---");
 
-let halmaz = new Set();
+let tryArr = [
+	['x', 'y', 'z', 1],
+	[0, -1, 4, 0],
+	[-1, 0, -8, -5],
+	[-5, 3, 0, 1],
+	[3, 2, -4, 5]];
 
-var arr1 = [1, 2, 3, 4, 5, 6, 7];
-var arr2 = [2, 3, 4, 5, 6, 7];
-var arr3 = [1, 3, 4, 5, 6, 7];
-var arr4 = [1, 2, 4, 5, 6, 7];
-var arr5 = [1, 2, 3, 4, 5, 6, 7];
-
-halmaz.add(arr1.join("/"));
-halmaz.add(arr2.join("/"));
-halmaz.add(arr3.join("/"));
-halmaz.add(arr4.join("/"));
-
-console.log(halmaz);
-
-halmaz.add(arr5.join("/"));
-
-console.log(halmaz);
+console.log(tryArr);
+tryArr[3].forEach((e, i, a) => a[i] = e / -5);
+console.log(tryArr);

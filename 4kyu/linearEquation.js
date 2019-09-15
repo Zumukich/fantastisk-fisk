@@ -34,9 +34,9 @@ function multiplyIntOrFraction([numerator1, denominator1], [numerator2, denomina
 		numerator2 /= numGCD;
 		denominator1 /= numGCD;
 	}
-	//	if (numerator1 * numerator2 > Number.MAX_SAFE_INTEGER || denominator1 * denominator2 > Number.MAX_SAFE_INTEGER) {
-	//		console.log("Warn!");
-	//	}
+	if (numerator1 * numerator2 > Number.MAX_SAFE_INTEGER || denominator1 * denominator2 > Number.MAX_SAFE_INTEGER) {
+		console.log("Warn!");
+	}
 	return reduceFraction(numerator1 * numerator2, denominator1 * denominator2);
 }
 
@@ -174,7 +174,66 @@ function solve(equations) {
 			equations.splice(i, 1);
 		}
 	}
-	let eliminationMatrix = prepareEqMatrix(createEqMatrix(equations));
+	//let eliminationMatrix = prepareEqMatrix(createEqMatrix(equations));
+
+	let unPivotedMatrix = [
+		['p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 1],
+		[-26, -63, -49, 62, -58, -25, -69, 63, 67, -20, 78, -3631],
+		[52, 73, 71, -33, 71, 38, -28, 66, 75, -92, -24, -16811],
+		[58, 47, -83, -62, -86, 32, -7, -50, 46, 82, 0, 10775],
+		[-27, 87, -33, 59, 94, -62, -59, 100, 31, -79, -97, -2561],
+		[54, 40, -45, -50, 3, -66, 26, 71, -56, -71, 27, -9096],
+		[91, 73, -3, 67, 95, 13, 77, -79, -65, 93, 1, 20308],
+		[19, -73, -28, 48, -28, -44, 49, -42, 17, -83, 16, 2697],
+		[-50, -83, 62, -60, -28, 38, 0, 72, -70, 7, -1, -20978],
+		[24, -7, -46, 87, 53, 60, 27, -61, 20, 82, 86, 15807],
+		[95, -40, -8, 60, 75, 56, -80, -70, -86, 14, -13, -6097],
+		[-81, 52, -6, 51, -65, -2, 53, -3, 54, -3, -38, 10989]];
+
+	let rowPivotedMatrixDesc = [
+		['p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 1],
+		[95, -40, -8, 60, 75, 56, -80, -70, -86, 14, -13, -6097],
+		[-27, 87, -33, 59, 94, -62, -59, 100, 31, -79, -97, -2561],
+		[52, 73, 71, -33, 71, 38, -28, 66, 75, -92, -24, -16811],
+		[24, -7, -46, 87, 53, 60, 27, -61, 20, 82, 86, 15807],
+		[91, 73, -3, 67, 95, 13, 77, -79, -65, 93, 1, 20308],
+		[54, 40, -45, -50, 3, -66, 26, 71, -56, -71, 27, -9096],
+		[-26, -63, -49, 62, -58, -25, -69, 63, 67, -20, 78, -3631],
+		[-50, -83, 62, -60, -28, 38, 0, 72, -70, 7, -1, -20978],
+		[-81, 52, -6, 51, -65, -2, 53, -3, 54, -3, -38, 10989],
+		[58, 47, -83, -62, -86, 32, -7, -50, 46, 82, 0, 10775],
+		[19, -73, -28, 48, -28, -44, 49, -42, 17, -83, 16, 2697]];
+
+	let rowPivotedMatrixAsc = [
+		['p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 1],
+		[19, -73, -28, 48, -28, -44, 49, -42, 17, -83, 16, 2697],
+		[24, -7, -46, 87, 53, 60, 27, -61, 20, 82, 86, 15807],
+		[91, 73, -3, 67, 95, 13, 77, -79, -65, 93, 1, 20308],
+		[52, 73, 71, -33, 71, 38, -28, 66, 75, -92, -24, -16811],
+		[54, 40, -45, -50, 3, -66, 26, 71, -56, -71, 27, -9096],
+		[-81, 52, -6, 51, -65, -2, 53, -3, 54, -3, -38, 10989],
+		[58, 47, -83, -62, -86, 32, -7, -50, 46, 82, 0, 10775],
+		[-26, -63, -49, 62, -58, -25, -69, 63, 67, -20, 78, -3631],
+		[-27, 87, -33, 59, 94, -62, -59, 100, 31, -79, -97, -2561],
+		[95, -40, -8, 60, 75, 56, -80, -70, -86, 14, -13, -6097],
+		[-50, -83, 62, -60, -28, 38, 0, 72, -70, 7, -1, -20978]];
+
+	let completePivotedMatrix = [
+		["w", "p", "t", "y", "s", "q", "r", "z", "u", "x", "v", 1],
+		[100, -27, 94, -79, 59, 87, -33, -97, -62, 31, -59, -2561],
+		[-70, 95, 75, 14, 60, -40, -8, -13, 56, -86, -80, -6097],
+		[-79, 91, 95, 93, 67, 73, -3, 1, 13, -65, 77, 20308],
+		[66, 52, 71, -92, -33, 73, 71, -24, 38, 75, -28, -16811],
+		[-61, 24, 53, 82, 87, -7, -46, 86, 60, 20, 27, 15807],
+		[72, -50, -28, 7, -60, -83, 62, -1, 38, -70, 0, -20978],
+		[-50, 58, -86, 82, -62, 47, -83, 0, 32, 46, -7, 10775],
+		[63, -26, -58, -20, 62, -63, -49, 78, -25, 67, -69, -3631],
+		[71, 54, 3, -71, -50, 40, -45, 27, -66, -56, 26, -9096],
+		[-3, -81, -65, -3, 51, 52, -6, -38, -2, 54, 53, 10989],
+		[-42, 19, -28, -83, 48, -73, -28, 16, -44, 17, 49, 2697]];
+
+	let eliminationMatrix = completePivotedMatrix;
+
 	if (eliminationMatrix[0].length > eliminationMatrix.length) {
 		return null;
 	}
@@ -194,7 +253,7 @@ function solve(equations) {
 			rowFactor = multiplyIntOrFraction(splitFraction(eliminationMatrix[prevRows][curRow]), splitFraction(-1));
 			eliminationMatrix[prevRows].forEach((ent, idx, arr) => arr[idx] = addIntOrFraction(splitFraction(multiplyIntOrFraction(splitFraction(eliminationMatrix[curRow][idx]), splitFraction(rowFactor))), splitFraction(arr[idx])));
 		}
-		console.log("Sor: ", curRow, "Mátrix: \n", eliminationMatrix);
+		//console.log("Sor: ", curRow, "Mátrix: \n", eliminationMatrix);
 	}
 	if (eliminationMatrix[0].length < eliminationMatrix.length) {
 		// ha van lejjebb bárhol nemnull, akkor return null

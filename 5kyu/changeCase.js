@@ -4,13 +4,15 @@ function changeCase(identifier, targetCase) {
 	const hasUndersc = identifier.match(/_/) !== null;
 	if ((hasUpper && hasDash) || (hasUpper && hasUndersc) || (hasDash && hasUndersc)) return undefined;
 	let blocks = identifier.split(/(?=[A-Z_-])/).map(e => e.toLowerCase()).map(e => e.replace(/[_-]/, ""));
-	switch (true) {
-		case (targetCase == "camel"): return blocks.map((e, i) => i > 0 ? e.replace(/^./, s => s.toUpperCase()) : e).join("");
-		case (targetCase == "snake"): return blocks.join("_");
-		case (targetCase == "kebab"): return blocks.join("-");
-		default: return undefined;
+	switch (targetCase) {
+		case ("camel"): return blocks.map((e, i) => i > 0 ? e.replace(/^./, s => s.toUpperCase()) : e).join("");
+		case ("snake"): return blocks.join("_");
+		case ("kebab"): return blocks.join("-");
 	}
 }
+
+// From: https://www.codewars.com/kata/59be8c08bf10a49a240000b1
+// 5 kyu
 
 console.log(changeCase("snakeCase", "snake"));
 console.log(changeCase("some-lisp-name", "camel"));
